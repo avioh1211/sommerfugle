@@ -238,14 +238,14 @@
           <div class="step-row">
             <input type="text" id="f-name" placeholder="Indtast sommerfugl navn…" oninput="updateLinks()" onkeydown="if(event.key==='Enter')addRow()" />
             <a id="link-bf" class="search-link disabled" href="#" target="_blank" rel="noopener">
-              🔍 Søg billede på Google
+              🔍 Søg billede på Wikimedia
             </a>
           </div>
           <div class="img-row">
             <input type="text" id="f-bfImg" placeholder="Indsæt billedlink (URL) her…" oninput="previewImg('f-bfImg','prev-bf')" />
             <img id="prev-bf" class="img-preview" style="display:none" alt="" />
           </div>
-          <div class="img-hint">→ Åbn Google-søgningen · højreklik på et billede · "Kopier billedadresse" · indsæt ovenfor</div>
+          <div class="img-hint">→ Åbn Wikimedia · klik på et billede · højreklik · "Kopier billedadresse" · indsæt ovenfor</div>
         </div>
 
         <div class="step-divider"></div>
@@ -256,14 +256,14 @@
           <div class="step-row">
             <input type="text" id="f-plant" placeholder="Indtast foderplante navn…" oninput="updateLinks()" onkeydown="if(event.key==='Enter')addRow()" />
             <a id="link-pl" class="search-link disabled" href="#" target="_blank" rel="noopener">
-              🔍 Søg billede på Google
+              🔍 Søg billede på Wikimedia
             </a>
           </div>
           <div class="img-row">
             <input type="text" id="f-plImg" placeholder="Indsæt billedlink (URL) her…" oninput="previewImg('f-plImg','prev-pl')" />
             <img id="prev-pl" class="img-preview" style="display:none" alt="" />
           </div>
-          <div class="img-hint">→ Åbn Google-søgningen · højreklik på et billede · "Kopier billedadresse" · indsæt ovenfor</div>
+          <div class="img-hint">→ Åbn Wikimedia · klik på et billede · højreklik · "Kopier billedadresse" · indsæt ovenfor</div>
         </div>
 
         <div class="step-divider"></div>
@@ -311,13 +311,13 @@
         <div class="step-label"><div class="step-num">1</div>Sommerfugl navn</div>
         <div class="step-row">
           <input type="text" id="m-name" placeholder="Sommerfugl navn" oninput="updateModalLinks()" />
-          <a id="m-link-bf" class="search-link disabled" href="#" target="_blank" rel="noopener">🔍 Søg billede</a>
+          <a id="m-link-bf" class="search-link disabled" href="#" target="_blank" rel="noopener">🔍 Søg billede på Wikimedia</a>
         </div>
         <div class="img-row">
           <input type="text" id="m-bfImg" placeholder="Billedlink (URL)…" oninput="previewImg('m-bfImg','m-prev-bf')" />
           <img id="m-prev-bf" class="img-preview" style="display:none" alt="" />
         </div>
-        <div class="img-hint">Højreklik billede → "Kopier billedadresse" → indsæt ovenfor</div>
+        <div class="img-hint">Åbn Wikimedia · klik på et billede · højreklik · "Kopier billedadresse" · indsæt ovenfor</div>
       </div>
 
       <div class="step-divider"></div>
@@ -326,13 +326,13 @@
         <div class="step-label"><div class="step-num">2</div>Foderplante navn</div>
         <div class="step-row">
           <input type="text" id="m-plant" placeholder="Foderplante navn" oninput="updateModalLinks()" />
-          <a id="m-link-pl" class="search-link disabled" href="#" target="_blank" rel="noopener">🔍 Søg billede</a>
+          <a id="m-link-pl" class="search-link disabled" href="#" target="_blank" rel="noopener">🔍 Søg billede på Wikimedia</a>
         </div>
         <div class="img-row">
           <input type="text" id="m-plImg" placeholder="Billedlink (URL)…" oninput="previewImg('m-plImg','m-prev-pl')" />
           <img id="m-prev-pl" class="img-preview" style="display:none" alt="" />
         </div>
-        <div class="img-hint">Højreklik billede → "Kopier billedadresse" → indsæt ovenfor</div>
+        <div class="img-hint">Åbn Wikimedia · klik på et billede · højreklik · "Kopier billedadresse" · indsæt ovenfor</div>
       </div>
 
       <div class="step-divider"></div>
@@ -425,7 +425,7 @@
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
   function googleUrl(name) {
-    return name.trim() ? `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(name)}` : null;
+    return name.trim() ? `https://commons.wikimedia.org/w/index.php?search=${encodeURIComponent(name)}&title=Special:MediaSearch&type=image` : null;
   }
 
   function showNotif(msg) {
