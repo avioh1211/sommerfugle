@@ -11,435 +11,468 @@
       --forest: #1e3a0f; --moss: #3a6b1e; --fern: #6aaa3e; --sage: #a8cc8c;
       --mist: #dff0d0; --cream: #f8f5ed; --parchment: #ede8da;
       --gold: #c4922a; --bark: #5c3d1e; --ink: #1a2810;
+      --ai-glow: #e0f2fe; --ai-text: #0369a1;
     }
-    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); line-height: 1.5; }
 
     /* HEADER */
     .header {
-      background: var(--forest); padding: 18px 36px;
+      background: var(--forest); padding: 18px 24px;
       display: flex; align-items: center; justify-content: space-between;
       border-bottom: 3px solid var(--gold); position: sticky; top: 0; z-index: 100;
     }
-    .header h1 { font-family: 'Playfair Display', serif; font-size: 20px; color: #fff; }
+    .header h1 { font-family: 'Playfair Display', serif; font-size: clamp(16px, 4vw, 20px); color: #fff; }
     .header-sub { font-size: 11px; color: var(--sage); letter-spacing: .08em; text-transform: uppercase; margin-top: 2px; }
     .btn-print {
-      display: flex; align-items: center; gap: 7px; padding: 10px 18px;
+      display: flex; align-items: center; gap: 7px; padding: 10px 16px;
       background: var(--gold); color: #fff; border: none; border-radius: 8px;
       font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer;
+      white-space: nowrap;
     }
-    .btn-print:hover { background: #d4a440; }
 
     /* LAYOUT */
-    .main { max-width: 980px; margin: 0 auto; padding: 30px 20px; display: flex; flex-direction: column; gap: 26px; }
+    .main { max-width: 1080px; margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column; gap: 24px; }
 
     /* CARD */
-    .card { background: #fff; border-radius: 12px; border: 1px solid var(--parchment); overflow: hidden; }
+    .card { background: #fff; border-radius: 12px; border: 1px solid var(--parchment); overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
     .card-title {
-      background: var(--forest); color: var(--sage); padding: 11px 22px;
+      background: var(--forest); color: var(--sage); padding: 12px 20px;
       font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+      display: flex; justify-content: space-between; align-items: center;
     }
-    .card-body { padding: 22px; }
+    .card-body { padding: 20px; }
 
     /* FORM STEPS */
     .steps { display: flex; flex-direction: column; gap: 16px; }
-    .step { display: flex; flex-direction: column; gap: 7px; }
+    .step { display: flex; flex-direction: column; gap: 8px; }
     .step-label {
       display: flex; align-items: center; gap: 9px;
       font-size: 12px; font-weight: 600; color: var(--moss); text-transform: uppercase; letter-spacing: .06em;
     }
     .step-num {
-      width: 21px; height: 21px; border-radius: 50%; background: var(--forest); color: #fff;
+      width: 22px; height: 22px; border-radius: 50%; background: var(--forest); color: #fff;
       font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .step-row { display: flex; gap: 9px; align-items: center; }
-    input[type=text] {
-      flex: 1; padding: 9px 13px; border: 1.5px solid var(--parchment); border-radius: 8px;
-      font-family: 'DM Sans', sans-serif; font-size: 13.5px; color: var(--ink);
-      background: var(--cream); transition: border .15s, background .15s; min-width: 0;
+    .step-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    input[type=text], textarea {
+      flex: 1; min-width: 200px; padding: 10px 14px; border: 1.5px solid var(--parchment); border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink);
+      background: var(--cream); transition: all .15s;
     }
-    input[type=text]:focus { outline: none; border-color: var(--fern); background: #fff; }
-    .search-link {
-      display: inline-flex; align-items: center; gap: 6px; padding: 9px 13px;
-      border-radius: 8px; font-size: 12px; font-weight: 500; background: var(--mist);
-      color: var(--moss); border: 1px solid var(--sage); text-decoration: none;
-      white-space: nowrap; transition: all .15s; flex-shrink: 0;
+    input[type=text]:focus, textarea:focus { outline: none; border-color: var(--fern); background: #fff; box-shadow: 0 0 0 3px rgba(106, 170, 62, 0.1); }
+    
+    .search-link, .btn-ai-small {
+      display: inline-flex; align-items: center; gap: 6px; padding: 10px 14px;
+      border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none;
+      white-space: nowrap; transition: all .15s; border: 1px solid transparent; cursor: pointer;
     }
-    .search-link:hover { background: var(--sage); color: var(--forest); }
+    .search-link { background: var(--mist); color: var(--moss); border-color: var(--sage); }
     .search-link.disabled { opacity: .35; pointer-events: none; }
-    .img-row { display: flex; gap: 8px; align-items: center; margin-top: 2px; }
-    .img-row input { font-size: 12px; color: #888; }
-    .img-preview { width: 50px; height: 38px; object-fit: cover; border-radius: 6px; border: 1px solid var(--mist); flex-shrink: 0; }
-    .img-hint { font-size: 11px; color: #bbb; line-height: 1.5; }
-    .step-divider { height: 1px; background: var(--mist); margin: 2px 0; }
-    .btn-add {
-      display: inline-flex; align-items: center; gap: 7px; padding: 11px 24px;
-      background: var(--gold); color: #fff; border: none; border-radius: 8px;
-      font-family: 'DM Sans', sans-serif; font-size: 13.5px; font-weight: 600;
-      cursor: pointer; margin-top: 4px;
+    
+    .btn-ai-small { background: var(--ai-glow); color: var(--ai-text); border-color: #bae6fd; }
+    .btn-ai-small:hover { background: #bae6fd; }
+    .btn-ai-small:disabled { opacity: 0.5; cursor: wait; }
+
+    .img-row { display: flex; gap: 12px; align-items: flex-start; margin-top: 4px; }
+    .img-preview { 
+      width: 120px; height: 90px; object-fit: cover; border-radius: 8px; border: 1px solid var(--mist); 
+      flex-shrink: 0; background: var(--parchment); box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
-    .btn-add:hover { background: #d4a440; }
-    .btn-add:disabled { opacity: .4; cursor: default; }
+    
+    .btn-add {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px;
+      background: var(--gold); color: #fff; border: none; border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+      cursor: pointer; margin-top: 8px; transition: transform 0.1s;
+    }
+    .btn-add:disabled { opacity: .4; cursor: not-allowed; }
 
     /* LIST */
+    .list-container { overflow-x: auto; }
     .list-header {
-      display: grid; grid-template-columns: 52px 1fr 52px 1fr 145px 70px;
-      background: var(--forest);
+      display: grid; grid-template-columns: 100px 1.2fr 100px 1fr 120px 120px;
+      background: var(--forest); min-width: 900px;
     }
-    .list-header span {
-      padding: 9px 12px; font-size: 10.5px; color: var(--sage);
-      font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
-    }
-    .species-list { display: flex; flex-direction: column; }
+    .list-header span { padding: 12px 14px; font-size: 10px; color: var(--sage); font-weight: 600; text-transform: uppercase; }
+    .species-list { display: flex; flex-direction: column; min-width: 900px; }
     .species-row {
-      display: grid; grid-template-columns: 52px 1fr 52px 1fr 145px 70px;
-      align-items: center; border-bottom: 1px solid var(--mist);
-      transition: background .12s; cursor: pointer;
+      display: grid; grid-template-columns: 100px 1.2fr 100px 1fr 120px 120px;
+      align-items: center; border-bottom: 1px solid var(--mist); transition: background .12s; cursor: pointer;
     }
     .species-row:hover { background: var(--cream); }
-    .species-row:last-child { border-bottom: none; }
-    .s-img { padding: 6px 5px; }
-    .s-img img, .s-img .no-img {
-      width: 42px; height: 34px; object-fit: cover; border-radius: 5px; display: block;
+    .s-img { padding: 10px; display: flex; justify-content: center; }
+    .s-img img, .s-img .no-img { width: 80px; height: 60px; object-fit: cover; border-radius: 6px; }
+    .s-cell { padding: 14px; font-size: 14px; font-weight: 500; }
+    .row-actions { display: flex; gap: 6px; padding: 8px; justify-content: center; }
+    
+    /* AI IDENTIFICATION TOOL */
+    .ai-tool { background: var(--ai-glow); border: 1px solid #bae6fd; border-radius: 12px; margin-bottom: 24px; }
+    .ai-tool-header { padding: 15px 20px; border-bottom: 1px solid #bae6fd; display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--ai-text); }
+    .ai-tool-body { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+    .ai-result { 
+      background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #bae6fd; 
+      font-size: 14px; display: none; margin-top: 10px; animation: fadeIn 0.3s ease;
     }
-    .s-img .no-img {
-      background: var(--mist); display: flex; align-items: center; justify-content: center;
-      font-size: 17px; border: 1px dashed var(--sage);
-    }
-    .s-cell { padding: 10px 12px; font-size: 13px; font-weight: 500; }
-    .flight-badge {
-      display: inline-block; background: var(--mist); color: var(--forest);
-      padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 500;
-      border: 1px solid var(--sage);
-    }
-    .row-actions { display: flex; gap: 2px; padding: 4px 8px; }
-    .btn-edit, .btn-del {
-      background: none; border: none; cursor: pointer; font-size: 14px;
-      padding: 4px 6px; border-radius: 5px; transition: background .12s; opacity: .5;
-    }
-    .btn-edit:hover { background: var(--mist); opacity: 1; }
-    .btn-del { color: #c0392b; }
-    .btn-del:hover { background: #fde8e8; opacity: 1; }
 
     /* MODAL */
     .modal-overlay {
-      position: fixed; inset: 0; background: rgba(10,20,5,.52); z-index: 200;
-      display: flex; align-items: center; justify-content: center; padding: 20px;
-      backdrop-filter: blur(3px);
+      position: fixed; inset: 0; background: rgba(10,20,5,.6); z-index: 200;
+      display: flex; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(4px);
     }
     .modal {
-      background: #fff; border-radius: 14px; width: 100%; max-width: 620px;
-      max-height: 90vh; overflow-y: auto;
-      box-shadow: 0 24px 80px rgba(0,0,0,.25); animation: slideUp .2s ease;
+      background: #fff; border-radius: 14px; width: 100%; max-width: 650px;
+      max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(0,0,0,.3);
     }
-    @keyframes slideUp { from { transform: translateY(14px); opacity:0; } to { transform: translateY(0); opacity:1; } }
-    .modal-header {
-      background: var(--forest); padding: 15px 22px; display: flex; align-items: center;
-      justify-content: space-between; border-radius: 14px 14px 0 0;
-    }
-    .modal-header h3 { font-family: 'Playfair Display', serif; font-size: 17px; color: #fff; }
-    .modal-close { background: none; border: none; color: var(--sage); font-size: 18px; cursor: pointer; padding: 2px 6px; }
-    .modal-body { padding: 22px; display: flex; flex-direction: column; gap: 16px; }
-    .modal-footer {
-      padding: 14px 22px; border-top: 1px solid var(--mist);
-      display: flex; justify-content: flex-end; gap: 10px;
-    }
-    .btn-save {
-      padding: 10px 22px; background: var(--gold); color: #fff; border: none;
-      border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px;
-      font-weight: 600; cursor: pointer;
-    }
-    .btn-save:hover { background: #d4a440; }
-    .btn-cancel {
-      padding: 10px 18px; background: transparent; color: #888;
-      border: 1px solid var(--parchment); border-radius: 8px;
-      font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer;
-    }
-    .btn-cancel:hover { background: var(--cream); }
-
-    /* STATUS */
-    .status-bar {
-      font-size: 12px; color: var(--moss); padding: 10px 22px;
-      border-top: 1px solid var(--mist); background: var(--cream);
-      display: flex; align-items: center; gap: 8px;
-    }
-    .spinner {
-      width: 13px; height: 13px; border: 2px solid var(--sage);
-      border-top-color: var(--moss); border-radius: 50%;
-      animation: spin .6s linear infinite; display: inline-block;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .empty { padding: 32px; text-align: center; color: #bbb; font-size: 13px; }
-
-    /* NOTIFICATION */
-    .notif {
-      position: fixed; bottom: 22px; right: 22px; background: var(--forest);
-      color: #fff; padding: 11px 20px; border-radius: 8px; font-size: 13px;
-      box-shadow: 0 6px 24px rgba(0,0,0,.2); z-index: 500;
-      animation: fadeUp .2s ease;
-    }
-    @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    .modal-header { background: var(--forest); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-radius: 14px 14px 0 0; }
+    .modal-body { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+    .modal-footer { padding: 16px 20px; border-top: 1px solid var(--mist); display: flex; justify-content: flex-end; gap: 12px; background: #fafafa; }
 
     /* PRINT OVERLAY */
-    .print-overlay { position: fixed; inset: 0; background: #fff; z-index: 300; overflow-y: auto; }
-    .print-toolbar {
-      background: var(--forest); color: #fff; padding: 12px 28px;
-      display: flex; align-items: center; justify-content: space-between;
-      position: sticky; top: 0; z-index: 10;
-    }
-    .print-toolbar h3 { font-size: 14px; font-weight: 500; }
-    .print-actions { display: flex; gap: 10px; }
-    .btn-close {
-      background: transparent; color: var(--sage); border: 1px solid var(--moss);
-      padding: 7px 14px; border-radius: 7px; font-family: 'DM Sans', sans-serif;
-      font-size: 13px; cursor: pointer;
-    }
-    .btn-close:hover { background: rgba(255,255,255,.1); }
-    .doc { max-width: 860px; margin: 0 auto; padding: 48px 48px 64px; }
-    .doc-head { text-align: center; padding-bottom: 22px; border-bottom: 2.5px solid var(--forest); margin-bottom: 26px; }
-    .doc-head h1 { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--forest); margin-bottom: 5px; }
-    .doc-head p { font-size: 12px; color: var(--moss); letter-spacing: .06em; }
-    .doc-table { width: 100%; border-collapse: collapse; }
-    .doc-table thead tr { background: var(--forest); }
-    .doc-table thead th { padding: 9px 12px; color: var(--sage); font-size: 10px; text-transform: uppercase; letter-spacing: .08em; text-align: left; }
-    .doc-table tbody tr:nth-child(even) { background: var(--mist); }
-    .doc-table td { padding: 9px 12px; vertical-align: middle; border-bottom: 1px solid var(--parchment); font-size: 12px; }
-    .doc-img { width: 52px; height: 40px; object-fit: cover; border-radius: 4px; display: block; }
-    .doc-no-img { width: 52px; height: 40px; background: var(--mist); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-    .doc-name { font-weight: 600; font-size: 12px; }
-    .doc-fund-line { border-bottom: 1px solid #bbb; height: 22px; min-width: 90px; display: block; }
-    .doc-footer { margin-top: 28px; padding-top: 14px; border-top: 1px solid var(--parchment); font-size: 10px; color: #aaa; text-align: center; }
+    .print-overlay { position: fixed; inset: 0; background: #fff; z-index: 300; overflow-y: auto; display: none; }
+    
+    .notif-container { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 1000; }
+    .notif { background: var(--forest); color: #fff; padding: 12px 24px; border-radius: 30px; font-size: 14px; box-shadow: 0 8px 24px rgba(0,0,0,.2); animation: popIn .3s; }
+    
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes popIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 
-    @media print { .print-toolbar { display: none !important; } }
+    @media (max-width: 768px) {
+      .list-header, .species-row { grid-template-columns: 80px 1fr 80px 1fr 100px 1fr; min-width: 700px; }
+    }
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="header">
   <div>
-    <h1>🦋 Sommerfugle · Gladsaxe Kommune</h1>
-    <div class="header-sub">Naturguide · Feltregistrering</div>
+    <h1>🦋 Sommerfugle · Gladsaxe</h1>
+    <div class="header-sub">Naturguide · AI-drevet Feltregistrering</div>
   </div>
-  <button class="btn-print" onclick="openPrint()">🖨 Udskriv / PDF</button>
+  <button class="btn-print" onclick="openPrint()">🖨 <span>Udskriv / PDF</span></button>
 </header>
 
-<!-- MAIN -->
 <main class="main">
+  
+  <!-- ✨ AI IDENTIFICATION TOOL -->
+  <section class="ai-tool">
+    <div class="ai-tool-header">✨ Identificer din observation</div>
+    <div class="ai-tool-body">
+      <p style="font-size: 13px; color: var(--ai-text); margin-bottom: 5px;">Beskriv sommerfuglen (farver, mønstre, størrelse), og lad AI foreslå en art:</p>
+      <div style="display: flex; gap: 10px;">
+        <textarea id="ai-desc" placeholder="F.eks. 'Stor orange sommerfugl med sorte pletter og blå øjne på bagvingerne'..." rows="2"></textarea>
+      </div>
+      <button class="btn-ai-small" id="btn-id-butterfly" onclick="identifyButterfly()" style="align-self: flex-start;">✨ Gæt på arten</button>
+      <div id="ai-id-result" class="ai-result"></div>
+    </div>
+  </section>
 
   <!-- ADD FORM -->
-  <div class="card">
-    <div class="card-title">➕ Tilføj ny art</div>
+  <section class="card">
+    <div class="card-title">➕ Tilføj ny observation</div>
     <div class="card-body">
       <div class="steps">
-
-        <!-- Step 1 -->
         <div class="step">
           <div class="step-label"><div class="step-num">1</div>Sommerfugl navn</div>
           <div class="step-row">
-            <input type="text" id="f-name" placeholder="Indtast sommerfugl navn…" oninput="updateLinks()" onkeydown="if(event.key==='Enter')addRow()" />
-            <a id="link-bf" class="search-link disabled" href="#" target="_blank" rel="noopener">
-              🔍 Søg billede på Wikimedia
-            </a>
+            <input type="text" id="f-name" placeholder="Navn på arten..." oninput="updateLinks()" />
+            <button class="btn-ai-small" id="btn-smart-fill" onclick="smartFillDetails()" title="Udfyld foderplante og flyvetid automatisk">✨ Autofyld info</button>
+            <a id="link-bf" class="search-link disabled" href="#" target="_blank">🔍 Wikimedia</a>
           </div>
           <div class="img-row">
-            <input type="text" id="f-bfImg" placeholder="Indsæt billedlink (URL) her…" oninput="previewImg('f-bfImg','prev-bf')" />
             <img id="prev-bf" class="img-preview" style="display:none" alt="" />
+            <div style="flex:1">
+              <input type="text" id="f-bfImg" placeholder="Billedlink (URL)..." oninput="previewImg('f-bfImg','prev-bf')" style="width:100%" />
+              <p style="font-size: 11px; color: #888; margin-top: 4px;">Indsæt URL til billede af sommerfuglen</p>
+            </div>
           </div>
-          <div class="img-hint">→ Åbn Wikimedia · klik på et billede · højreklik · "Kopier billedadresse" · indsæt ovenfor</div>
         </div>
 
         <div class="step-divider"></div>
 
-        <!-- Step 2 -->
         <div class="step">
-          <div class="step-label"><div class="step-num">2</div>Foderplante navn</div>
+          <div class="step-label"><div class="step-num">2</div>Foderplante</div>
           <div class="step-row">
-            <input type="text" id="f-plant" placeholder="Indtast foderplante navn…" oninput="updateLinks()" onkeydown="if(event.key==='Enter')addRow()" />
-            <a id="link-pl" class="search-link disabled" href="#" target="_blank" rel="noopener">
-              🔍 Søg billede på Wikimedia
-            </a>
+            <input type="text" id="f-plant" placeholder="Larvens værtsplante..." oninput="updateLinks()" />
+            <a id="link-pl" class="search-link disabled" href="#" target="_blank">🔍 Wikimedia</a>
           </div>
           <div class="img-row">
-            <input type="text" id="f-plImg" placeholder="Indsæt billedlink (URL) her…" oninput="previewImg('f-plImg','prev-pl')" />
             <img id="prev-pl" class="img-preview" style="display:none" alt="" />
+            <div style="flex:1">
+              <input type="text" id="f-plImg" placeholder="Billedlink (URL)..." oninput="previewImg('f-plImg','prev-pl')" style="width:100%" />
+            </div>
           </div>
-          <div class="img-hint">→ Åbn Wikimedia · klik på et billede · højreklik · "Kopier billedadresse" · indsæt ovenfor</div>
         </div>
 
         <div class="step-divider"></div>
 
-        <!-- Step 3 -->
         <div class="step">
           <div class="step-label"><div class="step-num">3</div>Flyvetid</div>
-          <div class="step-row">
-            <input type="text" id="f-flight" placeholder="f.eks. Marts – Oktober" style="max-width:260px" onkeydown="if(event.key==='Enter')addRow()" />
-          </div>
+          <input type="text" id="f-flight" placeholder="F.eks. Juni – August" style="max-width:300px" />
         </div>
 
-        <button class="btn-add" id="btn-add" onclick="addRow()" disabled>+ Tilføj til liste</button>
+        <button class="btn-add" id="btn-add" onclick="handleAdd()" disabled>+ Tilføj til listen</button>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- LIST -->
-  <div class="card">
-    <div class="card-title">🦋 Artsliste (<span id="count">0</span> arter)</div>
-    <div class="list-header">
-      <span></span><span>Sommerfugl</span><span></span><span>Foderplante</span><span>Flyvetid</span><span></span>
+  <section class="card">
+    <div class="card-title">
+      📋 Artsliste (<span id="count">0</span>)
+      <span style="font-size: 9px; opacity: 0.7;">Klik på en art for at se ✨ detaljer</span>
     </div>
-    <div class="species-list" id="species-list">
-      <div class="empty" id="empty-state">Indlæser…</div>
+    <div class="list-container">
+      <div class="list-header">
+        <span>Foto</span><span>Art</span><span>Plante</span><span>Foderplante</span><span>Flyvetid</span><span>AI</span>
+      </div>
+      <div class="species-list" id="species-list">
+        <div class="empty" id="empty-state">Forbinder til naturdata...</div>
+      </div>
     </div>
-    <div class="status-bar" id="status-bar" style="display:none">
-      <span class="spinner"></span> <span id="status-msg">Gemmer…</span>
-    </div>
-  </div>
-
+  </section>
 </main>
 
 <!-- EDIT MODAL -->
 <div class="modal-overlay" id="modal" style="display:none" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <div class="modal-header">
-      <h3 id="modal-title">Rediger art</h3>
+      <h3 id="modal-title">Rediger observation</h3>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="m-id" />
-
       <div class="step">
-        <div class="step-label"><div class="step-num">1</div>Sommerfugl navn</div>
+        <div class="step-label">Sommerfugl</div>
         <div class="step-row">
-          <input type="text" id="m-name" placeholder="Sommerfugl navn" oninput="updateModalLinks()" />
-          <a id="m-link-bf" class="search-link disabled" href="#" target="_blank" rel="noopener">🔍 Søg billede på Wikimedia</a>
+          <input type="text" id="m-name" oninput="updateModalLinks()" />
+          <button class="btn-ai-small" onclick="getFunFactModal()">✨ Sjov fakta</button>
         </div>
+        <div id="modal-ai-fact" class="ai-result" style="display:block; margin: 10px 0; background: #f0f9ff; color: #0369a1; border-color: #e0f2fe;"></div>
         <div class="img-row">
-          <input type="text" id="m-bfImg" placeholder="Billedlink (URL)…" oninput="previewImg('m-bfImg','m-prev-bf')" />
-          <img id="m-prev-bf" class="img-preview" style="display:none" alt="" />
+          <img id="m-prev-bf" class="img-preview" />
+          <input type="text" id="m-bfImg" placeholder="Billedlink..." oninput="previewImg('m-bfImg','m-prev-bf')" style="flex:1" />
         </div>
-        <div class="img-hint">Åbn Wikimedia · klik på et billede · højreklik · "Kopier billedadresse" · indsæt ovenfor</div>
       </div>
-
-      <div class="step-divider"></div>
-
       <div class="step">
-        <div class="step-label"><div class="step-num">2</div>Foderplante navn</div>
-        <div class="step-row">
-          <input type="text" id="m-plant" placeholder="Foderplante navn" oninput="updateModalLinks()" />
-          <a id="m-link-pl" class="search-link disabled" href="#" target="_blank" rel="noopener">🔍 Søg billede på Wikimedia</a>
-        </div>
-        <div class="img-row">
-          <input type="text" id="m-plImg" placeholder="Billedlink (URL)…" oninput="previewImg('m-plImg','m-prev-pl')" />
-          <img id="m-prev-pl" class="img-preview" style="display:none" alt="" />
-        </div>
-        <div class="img-hint">Åbn Wikimedia · klik på et billede · højreklik · "Kopier billedadresse" · indsæt ovenfor</div>
-      </div>
-
-      <div class="step-divider"></div>
-
-      <div class="step">
-        <div class="step-label"><div class="step-num">3</div>Flyvetid</div>
-        <input type="text" id="m-flight" placeholder="f.eks. Marts – Oktober" style="max-width:260px" />
+        <div class="step-label">Flyvetid</div>
+        <input type="text" id="m-flight" />
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal()">Annuller</button>
-      <button class="btn-save" onclick="saveEdit()">Gem ændringer</button>
+      <button class="btn-add" style="background:#888" onclick="closeModal()">Annuller</button>
+      <button class="btn-add" onclick="handleSaveEdit()">Gem ændringer</button>
     </div>
   </div>
 </div>
 
-<!-- PRINT OVERLAY -->
-<div class="print-overlay" id="print-view" style="display:none">
+<!-- PRINT VIEW -->
+<div class="print-overlay" id="print-view">
   <div class="print-toolbar">
     <h3>🖨 Udskriftsvisning</h3>
     <div class="print-actions">
-      <button class="btn-print" onclick="window.print()">Udskriv / Gem som PDF</button>
-      <button class="btn-close" onclick="closePrint()">✕ Luk</button>
+      <button class="btn-print" onclick="window.print()">Udskriv / PDF</button>
+      <button class="btn-print" style="background:transparent; border:1px solid var(--sage)" onclick="closePrint()">Luk</button>
     </div>
   </div>
   <div class="doc">
     <div class="doc-head">
       <h1>Dagsommerfugle i Gladsaxe Kommune</h1>
-      <p id="doc-subtitle">Sorteret efter flyvetid</p>
+      <p id="doc-subtitle">Observationer fra felten</p>
     </div>
-    <table class="doc-table">
+    <table style="width: 100%; border-collapse: collapse;">
       <thead>
-        <tr>
-          <th></th><th>Sommerfugl</th><th></th><th>Foderplante</th><th>Flyvetid</th><th>Fund</th>
+        <tr style="background: #f4f4f4;">
+          <th style="padding: 10px; text-align: left;">Art</th>
+          <th style="padding: 10px; text-align: left;">Foderplante</th>
+          <th style="padding: 10px; text-align: left;">Flyvetid</th>
+          <th style="padding: 10px; text-align: left;">Fundet</th>
         </tr>
       </thead>
       <tbody id="doc-tbody"></tbody>
     </table>
-    <div class="doc-footer" id="doc-footer"></div>
   </div>
 </div>
 
-<!-- NOTIFICATION -->
-<div class="notif" id="notif" style="display:none"></div>
+<div class="notif-container" id="notif-container"></div>
 
-<!-- FIREBASE -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-  import {
-    getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, onSnapshot, orderBy, query
-  } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+  import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+  import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBw9a6WAdh6tkvOj1sMSQpFbNx9Hj1Pdfs",
-    authDomain: "sommerfugle-gladsaxe.firebaseapp.com",
-    projectId: "sommerfugle-gladsaxe",
-    storageBucket: "sommerfugle-gladsaxe.firebasestorage.app",
-    messagingSenderId: "465649267734",
-    appId: "1:465649267734:web:2f6349fd468a57ca787137"
+  const firebaseConfig = JSON.parse(__firebase_config);
+  const appId = typeof __app_id !== 'undefined' ? __app_id : 'butterfly-guide';
+  
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const COLL_PATH = `artifacts/${appId}/public/data/sommerfugle`;
+  let rows = [];
+
+  window.dbFunctions = {
+    add: (data) => addDoc(collection(db, COLL_PATH), data),
+    update: (id, data) => updateDoc(doc(db, COLL_PATH, id), data),
+    remove: (id) => deleteDoc(doc(db, COLL_PATH, id))
   };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const col = collection(db, "sommerfugle");
+  async function initAuth() {
+    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+      await signInWithCustomToken(auth, __initial_auth_token);
+    } else {
+      await signInAnonymously(auth);
+    }
+  }
 
-  // ── Expose DB functions to global scope ──────────────────────────────────────
-  window._db = db;
-  window._col = col;
-  window._docRef = (id) => doc(db, "sommerfugle", id);
-  window._addDoc = addDoc;
-  window._updateDoc = updateDoc;
-  window._deleteDoc = deleteDoc;
-
-  // ── Real-time listener ───────────────────────────────────────────────────────
-  const q = query(col, orderBy("createdAt", "asc"));
-  onSnapshot(q, (snapshot) => {
-    window._rows = [];
-    snapshot.forEach(d => window._rows.push({ id: d.id, ...d.data() }));
-    renderList();
-  }, (err) => {
-    console.error(err);
-    document.getElementById("empty-state").textContent = "Fejl ved indlæsning. Tjek Firestore-regler.";
-    document.getElementById("empty-state").style.display = "block";
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const colRef = collection(db, COLL_PATH);
+      onSnapshot(colRef, (snapshot) => {
+        rows = [];
+        snapshot.forEach(doc => rows.push({ id: doc.id, ...doc.data() }));
+        rows.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        window._rows = rows;
+        renderList();
+      });
+    }
   });
+
+  initAuth();
 </script>
 
 <script>
-  // ── State ────────────────────────────────────────────────────────────────────
-  window._rows = [];
+  // ✨ GEMINI API INTEGRATION
+  const apiKey = ""; // Provided by environment
 
-  // ── Helpers ──────────────────────────────────────────────────────────────────
-  function googleUrl(name) {
-    return name.trim() ? `https://commons.wikimedia.org/w/index.php?search=${encodeURIComponent(name)}&title=Special:MediaSearch&type=image` : null;
+  async function callGemini(prompt, isJson = false) {
+    let retries = 0;
+    const maxRetries = 5;
+    const systemPrompt = "Du er en dansk sommerfugle-ekspert og biolog. Svar altid på dansk og vær præcis.";
+    
+    const payload = {
+      contents: [{ parts: [{ text: prompt }] }],
+      systemInstruction: { parts: [{ text: systemPrompt }] }
+    };
+
+    if (isJson) {
+      payload.generationConfig = {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: "OBJECT",
+          properties: {
+            hostPlant: { type: "STRING" },
+            flightPeriod: { type: "STRING" },
+            suggestedSpecies: { type: "STRING" },
+            description: { type: "STRING" }
+          }
+        }
+      };
+    }
+
+    while (retries < maxRetries) {
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        
+        const result = await response.json();
+        return result.candidates?.[0]?.content?.parts?.[0]?.text;
+      } catch (e) {
+        retries++;
+        await new Promise(r => setTimeout(r, Math.pow(2, retries) * 1000));
+      }
+    }
+    throw new Error("Kunne ikke kontakte AI-guiden");
   }
 
+  async function smartFillDetails() {
+    const name = document.getElementById("f-name").value.trim();
+    if (!name) return showNotif("Indtast venligst et navn først");
+    
+    const btn = document.getElementById("btn-smart-fill");
+    btn.disabled = true;
+    btn.textContent = "✨ Finder info...";
+
+    try {
+      const prompt = `Giv mig information om sommerfuglen '${name}' i Danmark. Jeg skal bruge dens primære værtsplante (larvens foderplante) og dens typiske flyveperiode.`;
+      const jsonStr = await callGemini(prompt, true);
+      const data = JSON.parse(jsonStr);
+      
+      document.getElementById("f-plant").value = data.hostPlant || "";
+      document.getElementById("f-flight").value = data.flightPeriod || "";
+      updateLinks();
+      showNotif("Info udfyldt af AI ✨");
+    } catch (e) {
+      showNotif("Fejl: Kunne ikke hente info.");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "✨ Autofyld info";
+    }
+  }
+
+  async function identifyButterfly() {
+    const desc = document.getElementById("ai-desc").value.trim();
+    if (!desc) return showNotif("Beskriv venligst hvad du har set");
+    
+    const btn = document.getElementById("btn-id-butterfly");
+    const resBox = document.getElementById("ai-id-result");
+    btn.disabled = true;
+    btn.textContent = "✨ Analyserer...";
+
+    try {
+      const prompt = `Baseret på denne beskrivelse af en sommerfugl set i Danmark: "${desc}", hvad er det mest sandsynlige svar? Returner dit gæt på arten og en kort begrundelse.`;
+      const jsonStr = await callGemini(prompt, true);
+      const data = JSON.parse(jsonStr);
+      
+      resBox.style.display = "block";
+      resBox.innerHTML = `<strong>Bud: ${data.suggestedSpecies}</strong><br><small>${data.description}</small><br><button onclick="useAiSuggestion('${data.suggestedSpecies}')" style="margin-top:8px; padding:4px 8px; font-size:11px; cursor:pointer">Brug dette navn</button>`;
+    } catch (e) {
+      showNotif("AI'en kunne ikke identificere den.");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "✨ Gæt på arten";
+    }
+  }
+
+  function useAiSuggestion(name) {
+    document.getElementById("f-name").value = name;
+    document.getElementById("ai-desc").value = "";
+    document.getElementById("ai-id-result").style.display = "none";
+    updateLinks();
+  }
+
+  async function getFunFact(name, targetId) {
+    try {
+      const prompt = `Giv mig én kort, fascinerende og unik fakta om sommerfuglen '${name}' på dansk. Maks 20 ord.`;
+      const fact = await callGemini(prompt);
+      document.getElementById(targetId).textContent = fact || "Ingen fakta fundet.";
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function getFunFactModal() {
+    const name = document.getElementById("m-name").value;
+    const box = document.getElementById("modal-ai-fact");
+    box.textContent = "✨ Henter spændende fakta...";
+    getFunFact(name, "modal-ai-fact");
+  }
+
+  // STANDARD UI LOGIC
   function showNotif(msg) {
-    const el = document.getElementById("notif");
+    const container = document.getElementById("notif-container");
+    const el = document.createElement("div");
+    el.className = "notif";
     el.textContent = msg;
-    el.style.display = "block";
-    setTimeout(() => el.style.display = "none", 2400);
+    container.appendChild(el);
+    setTimeout(() => el.remove(), 3000);
   }
 
-  function showStatus(msg) {
-    const bar = document.getElementById("status-bar");
-    document.getElementById("status-msg").textContent = msg;
-    bar.style.display = "flex";
-    setTimeout(() => bar.style.display = "none", 2000);
+  function googleUrl(name) {
+    if (!name) return "#";
+    return `https://commons.wikimedia.org/w/index.php?search=${encodeURIComponent(name.trim())}&title=Special:MediaSearch&type=image`;
   }
 
   function previewImg(inputId, previewId) {
@@ -448,84 +481,65 @@
     if (url) {
       img.src = url;
       img.style.display = "block";
-      img.onerror = () => img.style.display = "none";
+      img.onerror = () => { img.style.display = "none"; };
     } else {
       img.style.display = "none";
     }
   }
 
   function updateLinks() {
-    const name = document.getElementById("f-name").value.trim();
-    const plant = document.getElementById("f-plant").value.trim();
+    const name = document.getElementById("f-name").value;
+    const plant = document.getElementById("f-plant").value;
     const lbf = document.getElementById("link-bf");
     const lpl = document.getElementById("link-pl");
-    const btn = document.getElementById("btn-add");
-
-    if (name) { lbf.href = googleUrl(name); lbf.classList.remove("disabled"); }
-    else { lbf.href = "#"; lbf.classList.add("disabled"); }
-
-    if (plant) { lpl.href = googleUrl(plant); lpl.classList.remove("disabled"); }
-    else { lpl.href = "#"; lpl.classList.add("disabled"); }
-
-    btn.disabled = !name;
+    lbf.href = googleUrl(name);
+    lbf.classList.toggle("disabled", !name.trim());
+    lpl.href = googleUrl(plant);
+    lpl.classList.toggle("disabled", !plant.trim());
+    document.getElementById("btn-add").disabled = !name.trim();
   }
 
   function updateModalLinks() {
-    const name = document.getElementById("m-name").value.trim();
-    const plant = document.getElementById("m-plant").value.trim();
-    const lbf = document.getElementById("m-link-bf");
-    const lpl = document.getElementById("m-link-pl");
-
-    if (name) { lbf.href = googleUrl(name); lbf.classList.remove("disabled"); }
-    else { lbf.href = "#"; lbf.classList.add("disabled"); }
-
-    if (plant) { lpl.href = googleUrl(plant); lpl.classList.remove("disabled"); }
-    else { lpl.href = "#"; lpl.classList.add("disabled"); }
+    document.getElementById("modal-ai-fact").textContent = "";
   }
 
-  // ── Render list ───────────────────────────────────────────────────────────────
   function renderList() {
-    const rows = window._rows;
     const list = document.getElementById("species-list");
-    const empty = document.getElementById("empty-state");
-    document.getElementById("count").textContent = rows.length;
+    const count = document.getElementById("count");
+    const data = window._rows || [];
+    count.textContent = data.length;
+    list.innerHTML = "";
 
-    if (rows.length === 0) {
-      empty.textContent = "Ingen arter endnu. Tilføj den første ovenfor.";
-      empty.style.display = "block";
-      list.querySelectorAll(".species-row").forEach(el => el.remove());
+    if (data.length === 0) {
+      list.innerHTML = `<div class="empty">Ingen observationer endnu.</div>`;
       return;
     }
-    empty.style.display = "none";
 
-    // Re-render all rows
-    list.querySelectorAll(".species-row").forEach(el => el.remove());
-    rows.forEach(row => {
-      const div = document.createElement("div");
-      div.className = "species-row";
-      div.onclick = () => openEdit(row);
-      div.innerHTML = `
-        <div class="s-img">${row.bfImg
-          ? `<img src="${row.bfImg}" alt="${row.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-          : ''}<div class="no-img" style="${row.bfImg ? 'display:none' : ''}">🦋</div></div>
-        <div class="s-cell">${row.name}</div>
-        <div class="s-img">${row.plImg
-          ? `<img src="${row.plImg}" alt="${row.plant}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-          : ''}<div class="no-img" style="${row.plImg ? 'display:none' : ''}">🌿</div></div>
-        <div class="s-cell">${row.plant || '<span style="color:#ccc">—</span>'}</div>
-        <div class="s-cell"><span class="flight-badge">${row.flight || '—'}</span></div>
+    data.forEach(item => {
+      const row = document.createElement("div");
+      row.className = "species-row";
+      row.onclick = () => openEdit(item);
+      row.innerHTML = `
+        <div class="s-img">
+          ${item.bfImg ? `<img src="${item.bfImg}" onerror="this.outerHTML='<div class=no-img>🦋</div>'">` : '<div class="no-img">🦋</div>'}
+        </div>
+        <div class="s-cell" style="font-weight:700;">${item.name}</div>
+        <div class="s-img">
+          ${item.plImg ? `<img src="${item.plImg}" onerror="this.outerHTML='<div class=no-img>🌿</div>'">` : '<div class="no-img">🌿</div>'}
+        </div>
+        <div class="s-cell">${item.plant || '—'}</div>
+        <div class="s-cell">${item.flight || '—'}</div>
         <div class="row-actions">
-          <button class="btn-edit" title="Rediger" onclick="event.stopPropagation();openEdit(${JSON.stringify(row).replace(/"/g, '&quot;')})">✏️</button>
-          <button class="btn-del" title="Slet" onclick="event.stopPropagation();deleteRow('${row.id}')">✕</button>
-        </div>`;
-      list.appendChild(div);
+          <button class="btn-ai-small" style="padding: 5px 8px;" onclick="event.stopPropagation(); openEdit(${JSON.stringify(item).replace(/"/g, '&quot;')})">✨ Info</button>
+          <button class="btn-del" onclick="event.stopPropagation(); handleDelete('${item.id}')">✕</button>
+        </div>
+      `;
+      list.appendChild(row);
     });
   }
 
-  // ── Add ───────────────────────────────────────────────────────────────────────
-  async function addRow() {
+  async function handleAdd() {
     const name = document.getElementById("f-name").value.trim();
-    if (!name) return;
     const data = {
       name,
       plant: document.getElementById("f-plant").value.trim(),
@@ -534,99 +548,63 @@
       plImg: document.getElementById("f-plImg").value.trim(),
       createdAt: Date.now()
     };
-    showStatus("Gemmer…");
-    await window._addDoc(window._col, data);
-    // Clear form
-    ["f-name","f-plant","f-flight","f-bfImg","f-plImg"].forEach(id => document.getElementById(id).value = "");
-    ["prev-bf","prev-pl"].forEach(id => { document.getElementById(id).style.display="none"; });
-    document.getElementById("btn-add").disabled = true;
-    ["link-bf","link-pl"].forEach(id => document.getElementById(id).classList.add("disabled"));
-    showNotif("Art tilføjet ✓");
+    try {
+      await window.dbFunctions.add(data);
+      ["f-name", "f-plant", "f-flight", "f-bfImg", "f-plImg"].forEach(id => document.getElementById(id).value = "");
+      previewImg('f-bfImg', 'prev-bf');
+      previewImg('f-plImg', 'prev-pl');
+      updateLinks();
+      showNotif("Observation gemt!");
+    } catch (e) { showNotif("Fejl."); }
   }
 
-  // ── Delete ────────────────────────────────────────────────────────────────────
-  async function deleteRow(id) {
-    if (!confirm("Slet denne art?")) return;
-    showStatus("Sletter…");
-    await window._deleteDoc(window._docRef(id));
-    showNotif("Art slettet");
+  async function handleDelete(id) {
+    if (confirm("Slet registrering?")) {
+      await window.dbFunctions.remove(id);
+      showNotif("Slettet.");
+    }
   }
 
-  // ── Edit modal ────────────────────────────────────────────────────────────────
-  function openEdit(row) {
-    document.getElementById("m-id").value = row.id;
-    document.getElementById("modal-title").textContent = "Rediger: " + row.name;
-    document.getElementById("m-name").value = row.name || "";
-    document.getElementById("m-plant").value = row.plant || "";
-    document.getElementById("m-flight").value = row.flight || "";
-    document.getElementById("m-bfImg").value = row.bfImg || "";
-    document.getElementById("m-plImg").value = row.plImg || "";
-    previewImg("m-bfImg", "m-prev-bf");
-    previewImg("m-plImg", "m-prev-pl");
-    updateModalLinks();
+  function openEdit(item) {
+    document.getElementById("m-id").value = item.id;
+    document.getElementById("m-name").value = item.name || "";
+    document.getElementById("m-flight").value = item.flight || "";
+    document.getElementById("m-bfImg").value = item.bfImg || "";
+    previewImg('m-bfImg', 'm-prev-bf');
+    document.getElementById("modal-ai-fact").textContent = "Tryk på knappen for en sjov fakta om denne art!";
     document.getElementById("modal").style.display = "flex";
   }
 
-  function closeModal() {
-    document.getElementById("modal").style.display = "none";
-  }
+  function closeModal() { document.getElementById("modal").style.display = "none"; }
 
-  async function saveEdit() {
+  async function handleSaveEdit() {
     const id = document.getElementById("m-id").value;
     const data = {
       name: document.getElementById("m-name").value.trim(),
-      plant: document.getElementById("m-plant").value.trim(),
       flight: document.getElementById("m-flight").value.trim(),
       bfImg: document.getElementById("m-bfImg").value.trim(),
-      plImg: document.getElementById("m-plImg").value.trim(),
+      updatedAt: Date.now()
     };
-    showStatus("Gemmer ændringer…");
-    await window._updateDoc(window._docRef(id), data);
+    await window.dbFunctions.update(id, data);
     closeModal();
-    showNotif("Ændringer gemt ✓");
+    showNotif("Opdateret!");
   }
 
-  // ── Print ─────────────────────────────────────────────────────────────────────
   function openPrint() {
-    const rows = window._rows;
-    document.getElementById("doc-subtitle").textContent =
-      `De ${rows.length} arter · sorteret efter flyvetid`;
-    document.getElementById("doc-footer").textContent =
-      `Naturguide · Gladsaxe Kommune · Opdateret ${new Date().toLocaleDateString("da-DK")}`;
-
+    const data = window._rows || [];
     const tbody = document.getElementById("doc-tbody");
-    tbody.innerHTML = rows.map(row => `
+    tbody.innerHTML = data.map(item => `
       <tr>
-        <td>${row.bfImg
-          ? `<img class="doc-img" src="${row.bfImg}" alt="${row.name}">`
-          : `<div class="doc-no-img">🦋</div>`}</td>
-        <td><div class="doc-name">${row.name}</div></td>
-        <td>${row.plImg
-          ? `<img class="doc-img" src="${row.plImg}" alt="${row.plant}">`
-          : `<div class="doc-no-img">🌿</div>`}</td>
-        <td>${row.plant || ''}</td>
-        <td style="text-align:center">${row.flight || ''}</td>
-        <td><span class="doc-fund-line"></span></td>
-      </tr>`).join("");
-
+        <td style="padding:10px; border-bottom:1px solid #ddd;"><strong>${item.name}</strong></td>
+        <td style="padding:10px; border-bottom:1px solid #ddd;">${item.plant || ''}</td>
+        <td style="padding:10px; border-bottom:1px solid #ddd;">${item.flight || ''}</td>
+        <td style="padding:10px; border-bottom:1px solid #ddd;"><span style="display:inline-block; border-bottom:1px solid #000; width:80px; height:15px;"></span></td>
+      </tr>
+    `).join("");
     document.getElementById("print-view").style.display = "block";
   }
 
-  function closePrint() {
-    document.getElementById("print-view").style.display = "none";
-  }
-
-  // Expose to HTML onclick handlers
-  window.addRow = addRow;
-  window.deleteRow = deleteRow;
-  window.openEdit = openEdit;
-  window.closeModal = closeModal;
-  window.saveEdit = saveEdit;
-  window.openPrint = openPrint;
-  window.closePrint = closePrint;
-  window.updateLinks = updateLinks;
-  window.updateModalLinks = updateModalLinks;
-  window.previewImg = previewImg;
+  function closePrint() { document.getElementById("print-view").style.display = "none"; }
 </script>
 
 </body>
