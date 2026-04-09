@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dagsommerfugle · Gladsaxe Kommune</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --forest: #1e3a0f; --moss: #3a6b1e; --fern: #6aaa3e; --sage: #a8cc8c;
+      --mist: #dff0d0; --cream: #f8f5ed; --parchment: #ede8da;
+      --gold: #c4922a; --bark: #5c3d1e; --ink: #1a2810;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); }
+
+    /* HEADER */
+    .header {
+      background: var(--forest); padding: 18px 36px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 3px solid var(--gold); position: sticky; top: 0; z-index: 100;
+    }
+    .header h1 { font-family: 'Playfair Display', serif; font-size: 20px; color: #fff; }
+    .header-sub { font-size: 11px; color: var(--sage); letter-spacing: .08em; text-transform: uppercase; margin-top: 2px; }
+    .btn-print {
+      display: flex; align-items: center; gap: 7px; padding: 10px 18px;
+      background: var(--gold); color: #fff; border: none; border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer;
+    }
+    .btn-print:hover { background: #d4a440; }
+
+    /* LAYOUT */
+    .main { max-width: 980px; margin: 0 auto; padding: 30px 20px; display: flex; flex-direction: column; gap: 26px; }
+
+    /* CARD */
+    .card { background: #fff; border-radius: 12px; border: 1px solid var(--parchment); overflow: hidden; }
+    .card-title {
+      background: var(--forest); color: var(--sage); padding: 11px 22px;
+      font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+    }
+    .card-body { padding: 22px; }
+
+    /* FORM STEPS */
+    .steps { display: flex; flex-direction: column; gap: 16px; }
+    .step { display: flex; flex-direction: column; gap: 7px; }
+    .step-label {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 12px; font-weight: 600; color: var(--moss); text-transform: uppercase; letter-spacing: .06em;
+    }
+    .step-num {
+      width: 21px; height: 21px; border-radius: 50%; background: var(--forest); color: #fff;
+      font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .step-row { display: flex; gap: 9px; align-items: center; }
+    input[type=text] {
+      flex: 1; padding: 9px 13px; border: 1.5px solid var(--parchment); border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-size: 13.5px; color: var(--ink);
+      background: var(--cream); transition: border .15s, background .15s; min-width: 0;
+    }
+    input[type=text]:focus { outline: none; border-color: var(--fern); background: #fff; }
+    .search-link {
+      display: inline-flex; align-items: center; gap: 6px; padding: 9px 13px;
+      border-radius: 8px; font-size: 12px; font-weight: 500; background: var(--mist);
+      color: var(--moss); border: 1px solid var(--sage); text-decoration: none;
+      white-space: nowrap; transition: all .15s; flex-shrink: 0;
+    }
+    .search-link:hover { background: var(--sage); color: var(--forest); }
+    .search-link.disabled { opacity: .35; pointer-events: none; }
+    .img-row { display: flex; gap: 8px; align-items: center; margin-top: 2px; }
+    .img-row input { font-size: 12px; color: #888; }
+    .img-preview { width: 50px; height: 38px; object-fit: cover; border-radius: 6px; border: 1px solid var(--mist); flex-shrink: 0; }
+    .img-hint { font-size: 11px; color: #bbb; line-height: 1.5; }
+    .step-divider { height: 1px; background: var(--mist); margin: 2px 0; }
+    .btn-add {
+      display: inline-flex; align-items: center; gap: 7px; padding: 11px 24px;
+      background: var(--gold); color: #fff; border: none; border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-size: 13.5px; font-weight: 600;
+      cursor: pointer; margin-top: 4px;
+    }
+    .btn-add:hover { background: #d4a440; }
+    .btn-add:disabled { opacity: .4; cursor: default; }
+
+    /* LIST */
+    .list-header {
+      display: grid; grid-template-columns: 52px 1fr 52px 1fr 145px 70px;
+      background: var(--forest);
+    }
+    .list-header span {
+      padding: 9px 12px; font-size: 10.5px; color: var(--sage);
+      font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
+    }
+    .species-list { display: flex; flex-direction: column; }
+    .species-row {
+      display: grid; grid-template-columns: 52px 1fr 52px 1fr 145px 70px;
+      align-items: center; border-bottom: 1px solid var(--mist);
+      transition: background .12s; cursor: pointer;
+    }
+    .species-row:hover { background: var(--cream); }
+    .species-row:last-child { border-bottom: none; }
+    .s-img { padding: 6px 5px; }
+    .s-img img, .s-img .no-img {
+      width: 42px; height: 34px; object-fit: cover; border-radius: 5px; display: block;
+    }
+    .s-img .no-img {
+      background: var(--mist); display: flex; align-items: center; justify-content: center;
+      font-size: 17px; border: 1px dashed var(--sage);
+    }
+    .s-cell { padding: 10px 12px; font-size: 13px; font-weight: 500; }
+    .flight-badge {
+      display: inline-block; background: var(--mist); color: var(--forest);
+      padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 500;
+      border: 1px solid var(--sage);
+    }
+    .row-actions { display: flex; gap: 2px; padding: 4px 8px; }
+    .btn-edit, .btn-del {
+      background: none; border: none; cursor: pointer; font-size: 14px;
+      padding: 4px 6px; border-radius: 5px; transition: background .12s; opacity: .5;
+    }
+    .btn-edit:hover { background: var(--mist); opacity: 1; }
+    .btn-del { color: #c0392b; }
+    .btn-del:hover { background: #fde8e8; opacity: 1; }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(10,20,5,.52); z-index: 200;
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+      backdrop-filter: blur(3px);
+    }
+    .modal {
+      background: #fff; border-radius: 14px; width: 100%; max-width: 620px;
+      max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 24px 80px rgba(0,0,0,.25); animation: slideUp .2s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(14px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+    .modal-header {
+      background: var(--forest); padding: 15px 22px; display: flex; align-items: center;
+      justify-content: space-between; border-radius: 14px 14px 0 0;
+    }
+    .modal-header h3 { font-family: 'Playfair Display', serif; font-size: 17px; color: #fff; }
+    .modal-close { background: none; border: none; color: var(--sage); font-size: 18px; cursor: pointer; padding: 2px 6px; }
+    .modal-body { padding: 22px; display: flex; flex-direction: column; gap: 16px; }
+    .modal-footer {
+      padding: 14px 22px; border-top: 1px solid var(--mist);
+      display: flex; justify-content: flex-end; gap: 10px;
+    }
+    .btn-save {
+      padding: 10px 22px; background: var(--gold); color: #fff; border: none;
+      border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px;
+      font-weight: 600; cursor: pointer;
+    }
+    .btn-save:hover { background: #d4a440; }
+    .btn-cancel {
+      padding: 10px 18px; background: transparent; color: #888;
+      border: 1px solid var(--parchment); border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer;
+    }
+    .btn-cancel:hover { background: var(--cream); }
+
+    /* STATUS */
+    .status-bar {
+      font-size: 12px; color: var(--moss); padding: 10px 22px;
+      border-top: 1px solid var(--mist); background: var(--cream);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .spinner {
+      width: 13px; height: 13px; border: 2px solid var(--sage);
+      border-top-color: var(--moss); border-radius: 50%;
+      animation: spin .6s linear infinite; display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .empty { padding: 32px; text-align: center; color: #bbb; font-size: 13px; }
+
+    /* NOTIFICATION */
+    .notif {
+      position: fixed; bottom: 22px; right: 22px; background: var(--forest);
+      color: #fff; padding: 11px 20px; border-radius: 8px; font-size: 13px;
+      box-shadow: 0 6px 24px rgba(0,0,0,.2); z-index: 500;
+      animation: fadeUp .2s ease;
+    }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+    /* PRINT OVERLAY */
+    .print-overlay { position: fixed; inset: 0; background: #fff; z-index: 300; overflow-y: auto; }
+    .print-toolbar {
+      background: var(--forest); color: #fff; padding: 12px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .print-toolbar h3 { font-size: 14px; font-weight: 500; }
+    .print-actions { display: flex; gap: 10px; }
+    .btn-close {
+      background: transparent; color: var(--sage); border: 1px solid var(--moss);
+      padding: 7px 14px; border-radius: 7px; font-family: 'DM Sans', sans-serif;
+      font-size: 13px; cursor: pointer;
+    }
+    .btn-close:hover { background: rgba(255,255,255,.1); }
+    .doc { max-width: 860px; margin: 0 auto; padding: 48px 48px 64px; }
+    .doc-head { text-align: center; padding-bottom: 22px; border-bottom: 2.5px solid var(--forest); margin-bottom: 26px; }
+    .doc-head h1 { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--forest); margin-bottom: 5px; }
+    .doc-head p { font-size: 12px; color: var(--moss); letter-spacing: .06em; }
+    .doc-table { width: 100%; border-collapse: collapse; }
+    .doc-table thead tr { background: var(--forest); }
+    .doc-table thead th { padding: 9px 12px; color: var(--sage); font-size: 10px; text-transform: uppercase; letter-spacing: .08em; text-align: left; }
+    .doc-table tbody tr:nth-child(even) { background: var(--mist); }
+    .doc-table td { padding: 9px 12px; vertical-align: middle; border-bottom: 1px solid var(--parchment); font-size: 12px; }
+    .doc-img { width: 52px; height: 40px; object-fit: cover; border-radius: 4px; display: block; }
+    .doc-no-img { width: 52px; height: 40px; background: var(--mist); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .doc-name { font-weight: 600; font-size: 12px; }
+    .doc-fund-line { border-bottom: 1px solid #bbb; height: 22px; min-width: 90px; display: block; }
+    .doc-footer { margin-top: 28px; padding-top: 14px; border-top: 1px solid var(--parchment); font-size: 10px; color: #aaa; text-align: center; }
+
+    @media print { .print-toolbar { display: none !important; } }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div>
+    <h1>🦋 Sommerfugle · Gladsaxe Kommune</h1>
+    <div class="header-sub">Naturguide · Feltregistrering</div>
+  </div>
+  <button class="btn-print" onclick="openPrint()">🖨 Udskriv / PDF</button>
+</header>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ADD FORM -->
+  <div class="card">
+    <div class="card-title">➕ Tilføj ny art</div>
+    <div class="card-body">
+      <div class="steps">
+
+        <!-- Step 1 -->
+        <div class="step">
+          <div class="step-label"><div class="step-num">1</div>Sommerfugl navn</div>
+          <div class="step-row">
+            <input type="text" id="f-name" placeholder="Indtast sommerfugl navn…" oninput="updateLinks()" onkeydown="if(event.key==='Enter')addRow()" />
+            <a id="link-bf" class="search-link disabled" href="#" target="_blank" rel="noopener">
+              🔍 Søg billede på Wikimedia
+            </a>
+          </div>
+          <div class="img-row">
+            <input type="text" id="f-bfImg" placeholder="Indsæt billedlink (URL) her…" oninput="previewImg('f-bfImg','prev-bf')" />
+            <img id="prev-bf" class="img-preview" style="display:none" alt="" />
+          </div>
+          <div class="img-hint">→ Åbn Wikimedia · klik på et billede · højreklik · "Kopier billedadresse" · indsæt ovenfor</div>
+        </div>
+
+        <div class="step-divider"></div>
+
+        <!-- Step 2 -->
+        <div class="step">
+          <div class="step-label"><div class="step-num">2</div>Foderplante navn</div>
+          <div class="step-row">
+            <input type="text" id="f-plant" placeholder="Indtast foderplante navn…" oninput="updateLinks()" onkeydown="if(event.key==='Enter')addRow()" />
+            <a id="link-pl" class="search-link disabled" href="#" target="_blank" rel="noopener">
+              🔍 Søg billede på Wikimedia
+            </a>
+          </div>
+          <div class="img-row">
+            <input type="text" id="f-plImg" placeholder="Indsæt billedlink (URL) her…" oninput="previewImg('f-plImg','prev-pl')" />
+            <img id="prev-pl" class="img-preview" style="display:none" alt="" />
+          </div>
+          <div class="img-hint">→ Åbn Wikimedia · klik på et billede · højreklik · "Kopier billedadresse" · indsæt ovenfor</div>
+        </div>
+
+        <div class="step-divider"></div>
+
+        <!-- Step 3 -->
+        <div class="step">
+          <div class="step-label"><div class="step-num">3</div>Flyvetid</div>
+          <div class="step-row">
+            <input type="text" id="f-flight" placeholder="f.eks. Marts – Oktober" style="max-width:260px" onkeydown="if(event.key==='Enter')addRow()" />
+          </div>
+        </div>
+
+        <button class="btn-add" id="btn-add" onclick="addRow()" disabled>+ Tilføj til liste</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIST -->
+  <div class="card">
+    <div class="card-title">🦋 Artsliste (<span id="count">0</span> arter)</div>
+    <div class="list-header">
+      <span></span><span>Sommerfugl</span><span></span><span>Foderplante</span><span>Flyvetid</span><span></span>
+    </div>
+    <div class="species-list" id="species-list">
+      <div class="empty" id="empty-state">Indlæser…</div>
+    </div>
+    <div class="status-bar" id="status-bar" style="display:none">
+      <span class="spinner"></span> <span id="status-msg">Gemmer…</span>
+    </div>
+  </div>
+
+</main>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="modal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">Rediger art</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="m-id" />
+
+      <div class="step">
+        <div class="step-label"><div class="step-num">1</div>Sommerfugl navn</div>
+        <div class="step-row">
+          <input type="text" id="m-name" placeholder="Sommerfugl navn" oninput="updateModalLinks()" />
+          <a id="m-link-bf" class="search-link disabled" href="#" target="_blank" rel="noopener">🔍 Søg billede på Wikimedia</a>
+        </div>
+        <div class="img-row">
+          <input type="text" id="m-bfImg" placeholder="Billedlink (URL)…" oninput="previewImg('m-bfImg','m-prev-bf')" />
+          <img id="m-prev-bf" class="img-preview" style="display:none" alt="" />
+        </div>
+        <div class="img-hint">Åbn Wikimedia · klik på et billede · højreklik · "Kopier billedadresse" · indsæt ovenfor</div>
+      </div>
+
+      <div class="step-divider"></div>
+
+      <div class="step">
+        <div class="step-label"><div class="step-num">2</div>Foderplante navn</div>
+        <div class="step-row">
+          <input type="text" id="m-plant" placeholder="Foderplante navn" oninput="updateModalLinks()" />
+          <a id="m-link-pl" class="search-link disabled" href="#" target="_blank" rel="noopener">🔍 Søg billede på Wikimedia</a>
+        </div>
+        <div class="img-row">
+          <input type="text" id="m-plImg" placeholder="Billedlink (URL)…" oninput="previewImg('m-plImg','m-prev-pl')" />
+          <img id="m-prev-pl" class="img-preview" style="display:none" alt="" />
+        </div>
+        <div class="img-hint">Åbn Wikimedia · klik på et billede · højreklik · "Kopier billedadresse" · indsæt ovenfor</div>
+      </div>
+
+      <div class="step-divider"></div>
+
+      <div class="step">
+        <div class="step-label"><div class="step-num">3</div>Flyvetid</div>
+        <input type="text" id="m-flight" placeholder="f.eks. Marts – Oktober" style="max-width:260px" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Annuller</button>
+      <button class="btn-save" onclick="saveEdit()">Gem ændringer</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT OVERLAY -->
+<div class="print-overlay" id="print-view" style="display:none">
+  <div class="print-toolbar">
+    <h3>🖨 Udskriftsvisning</h3>
+    <div class="print-actions">
+      <button class="btn-print" onclick="window.print()">Udskriv / Gem som PDF</button>
+      <button class="btn-close" onclick="closePrint()">✕ Luk</button>
+    </div>
+  </div>
+  <div class="doc">
+    <div class="doc-head">
+      <h1>Dagsommerfugle i Gladsaxe Kommune</h1>
+      <p id="doc-subtitle">Sorteret efter flyvetid</p>
+    </div>
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th></th><th>Sommerfugl</th><th></th><th>Foderplante</th><th>Flyvetid</th><th>Fund</th>
+        </tr>
+      </thead>
+      <tbody id="doc-tbody"></tbody>
+    </table>
+    <div class="doc-footer" id="doc-footer"></div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif" style="display:none"></div>
+
+<!-- FIREBASE -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, onSnapshot, orderBy, query
+  } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBw9a6WAdh6tkvOj1sMSQpFbNx9Hj1Pdfs",
+    authDomain: "sommerfugle-gladsaxe.firebaseapp.com",
+    projectId: "sommerfugle-gladsaxe",
+    storageBucket: "sommerfugle-gladsaxe.firebasestorage.app",
+    messagingSenderId: "465649267734",
+    appId: "1:465649267734:web:2f6349fd468a57ca787137"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const col = collection(db, "sommerfugle");
+
+  // ── Expose DB functions to global scope ──────────────────────────────────────
+  window._db = db;
+  window._col = col;
+  window._docRef = (id) => doc(db, "sommerfugle", id);
+  window._addDoc = addDoc;
+  window._updateDoc = updateDoc;
+  window._deleteDoc = deleteDoc;
+
+  // ── Real-time listener ───────────────────────────────────────────────────────
+  const q = query(col, orderBy("createdAt", "asc"));
+  onSnapshot(q, (snapshot) => {
+    window._rows = [];
+    snapshot.forEach(d => window._rows.push({ id: d.id, ...d.data() }));
+    renderList();
+  }, (err) => {
+    console.error(err);
+    document.getElementById("empty-state").textContent = "Fejl ved indlæsning. Tjek Firestore-regler.";
+    document.getElementById("empty-state").style.display = "block";
+  });
+</script>
+
+<script>
+  // ── State ────────────────────────────────────────────────────────────────────
+  window._rows = [];
+
+  // ── Helpers ──────────────────────────────────────────────────────────────────
+  function googleUrl(name) {
+    return name.trim() ? `https://commons.wikimedia.org/w/index.php?search=${encodeURIComponent(name)}&title=Special:MediaSearch&type=image` : null;
+  }
+
+  function showNotif(msg) {
+    const el = document.getElementById("notif");
+    el.textContent = msg;
+    el.style.display = "block";
+    setTimeout(() => el.style.display = "none", 2400);
+  }
+
+  function showStatus(msg) {
+    const bar = document.getElementById("status-bar");
+    document.getElementById("status-msg").textContent = msg;
+    bar.style.display = "flex";
+    setTimeout(() => bar.style.display = "none", 2000);
+  }
+
+  function previewImg(inputId, previewId) {
+    const url = document.getElementById(inputId).value.trim();
+    const img = document.getElementById(previewId);
+    if (url) {
+      img.src = url;
+      img.style.display = "block";
+      img.onerror = () => img.style.display = "none";
+    } else {
+      img.style.display = "none";
+    }
+  }
+
+  function updateLinks() {
+    const name = document.getElementById("f-name").value.trim();
+    const plant = document.getElementById("f-plant").value.trim();
+    const lbf = document.getElementById("link-bf");
+    const lpl = document.getElementById("link-pl");
+    const btn = document.getElementById("btn-add");
+
+    if (name) { lbf.href = googleUrl(name); lbf.classList.remove("disabled"); }
+    else { lbf.href = "#"; lbf.classList.add("disabled"); }
+
+    if (plant) { lpl.href = googleUrl(plant); lpl.classList.remove("disabled"); }
+    else { lpl.href = "#"; lpl.classList.add("disabled"); }
+
+    btn.disabled = !name;
+  }
+
+  function updateModalLinks() {
+    const name = document.getElementById("m-name").value.trim();
+    const plant = document.getElementById("m-plant").value.trim();
+    const lbf = document.getElementById("m-link-bf");
+    const lpl = document.getElementById("m-link-pl");
+
+    if (name) { lbf.href = googleUrl(name); lbf.classList.remove("disabled"); }
+    else { lbf.href = "#"; lbf.classList.add("disabled"); }
+
+    if (plant) { lpl.href = googleUrl(plant); lpl.classList.remove("disabled"); }
+    else { lpl.href = "#"; lpl.classList.add("disabled"); }
+  }
+
+  // ── Render list ───────────────────────────────────────────────────────────────
+  function renderList() {
+    const rows = window._rows;
+    const list = document.getElementById("species-list");
+    const empty = document.getElementById("empty-state");
+    document.getElementById("count").textContent = rows.length;
+
+    if (rows.length === 0) {
+      empty.textContent = "Ingen arter endnu. Tilføj den første ovenfor.";
+      empty.style.display = "block";
+      list.querySelectorAll(".species-row").forEach(el => el.remove());
+      return;
+    }
+    empty.style.display = "none";
+
+    // Re-render all rows
+    list.querySelectorAll(".species-row").forEach(el => el.remove());
+    rows.forEach(row => {
+      const div = document.createElement("div");
+      div.className = "species-row";
+      div.onclick = () => openEdit(row);
+      div.innerHTML = `
+        <div class="s-img">${row.bfImg
+          ? `<img src="${row.bfImg}" alt="${row.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+          : ''}<div class="no-img" style="${row.bfImg ? 'display:none' : ''}">🦋</div></div>
+        <div class="s-cell">${row.name}</div>
+        <div class="s-img">${row.plImg
+          ? `<img src="${row.plImg}" alt="${row.plant}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+          : ''}<div class="no-img" style="${row.plImg ? 'display:none' : ''}">🌿</div></div>
+        <div class="s-cell">${row.plant || '<span style="color:#ccc">—</span>'}</div>
+        <div class="s-cell"><span class="flight-badge">${row.flight || '—'}</span></div>
+        <div class="row-actions">
+          <button class="btn-edit" title="Rediger" onclick="event.stopPropagation();openEdit(${JSON.stringify(row).replace(/"/g, '&quot;')})">✏️</button>
+          <button class="btn-del" title="Slet" onclick="event.stopPropagation();deleteRow('${row.id}')">✕</button>
+        </div>`;
+      list.appendChild(div);
+    });
+  }
+
+  // ── Add ───────────────────────────────────────────────────────────────────────
+  async function addRow() {
+    const name = document.getElementById("f-name").value.trim();
+    if (!name) return;
+    const data = {
+      name,
+      plant: document.getElementById("f-plant").value.trim(),
+      flight: document.getElementById("f-flight").value.trim(),
+      bfImg: document.getElementById("f-bfImg").value.trim(),
+      plImg: document.getElementById("f-plImg").value.trim(),
+      createdAt: Date.now()
+    };
+    showStatus("Gemmer…");
+    await window._addDoc(window._col, data);
+    // Clear form
+    ["f-name","f-plant","f-flight","f-bfImg","f-plImg"].forEach(id => document.getElementById(id).value = "");
+    ["prev-bf","prev-pl"].forEach(id => { document.getElementById(id).style.display="none"; });
+    document.getElementById("btn-add").disabled = true;
+    ["link-bf","link-pl"].forEach(id => document.getElementById(id).classList.add("disabled"));
+    showNotif("Art tilføjet ✓");
+  }
+
+  // ── Delete ────────────────────────────────────────────────────────────────────
+  async function deleteRow(id) {
+    if (!confirm("Slet denne art?")) return;
+    showStatus("Sletter…");
+    await window._deleteDoc(window._docRef(id));
+    showNotif("Art slettet");
+  }
+
+  // ── Edit modal ────────────────────────────────────────────────────────────────
+  function openEdit(row) {
+    document.getElementById("m-id").value = row.id;
+    document.getElementById("modal-title").textContent = "Rediger: " + row.name;
+    document.getElementById("m-name").value = row.name || "";
+    document.getElementById("m-plant").value = row.plant || "";
+    document.getElementById("m-flight").value = row.flight || "";
+    document.getElementById("m-bfImg").value = row.bfImg || "";
+    document.getElementById("m-plImg").value = row.plImg || "";
+    previewImg("m-bfImg", "m-prev-bf");
+    previewImg("m-plImg", "m-prev-pl");
+    updateModalLinks();
+    document.getElementById("modal").style.display = "flex";
+  }
+
+  function closeModal() {
+    document.getElementById("modal").style.display = "none";
+  }
+
+  async function saveEdit() {
+    const id = document.getElementById("m-id").value;
+    const data = {
+      name: document.getElementById("m-name").value.trim(),
+      plant: document.getElementById("m-plant").value.trim(),
+      flight: document.getElementById("m-flight").value.trim(),
+      bfImg: document.getElementById("m-bfImg").value.trim(),
+      plImg: document.getElementById("m-plImg").value.trim(),
+    };
+    showStatus("Gemmer ændringer…");
+    await window._updateDoc(window._docRef(id), data);
+    closeModal();
+    showNotif("Ændringer gemt ✓");
+  }
+
+  // ── Print ─────────────────────────────────────────────────────────────────────
+  function openPrint() {
+    const rows = window._rows;
+    document.getElementById("doc-subtitle").textContent =
+      `De ${rows.length} arter · sorteret efter flyvetid`;
+    document.getElementById("doc-footer").textContent =
+      `Naturguide · Gladsaxe Kommune · Opdateret ${new Date().toLocaleDateString("da-DK")}`;
+
+    const tbody = document.getElementById("doc-tbody");
+    tbody.innerHTML = rows.map(row => `
+      <tr>
+        <td>${row.bfImg
+          ? `<img class="doc-img" src="${row.bfImg}" alt="${row.name}">`
+          : `<div class="doc-no-img">🦋</div>`}</td>
+        <td><div class="doc-name">${row.name}</div></td>
+        <td>${row.plImg
+          ? `<img class="doc-img" src="${row.plImg}" alt="${row.plant}">`
+          : `<div class="doc-no-img">🌿</div>`}</td>
+        <td>${row.plant || ''}</td>
+        <td style="text-align:center">${row.flight || ''}</td>
+        <td><span class="doc-fund-line"></span></td>
+      </tr>`).join("");
+
+    document.getElementById("print-view").style.display = "block";
+  }
+
+  function closePrint() {
+    document.getElementById("print-view").style.display = "none";
+  }
+
+  // Expose to HTML onclick handlers
+  window.addRow = addRow;
+  window.deleteRow = deleteRow;
+  window.openEdit = openEdit;
+  window.closeModal = closeModal;
+  window.saveEdit = saveEdit;
+  window.openPrint = openPrint;
+  window.closePrint = closePrint;
+  window.updateLinks = updateLinks;
+  window.updateModalLinks = updateModalLinks;
+  window.previewImg = previewImg;
+</script>
+
+</body>
+</html>
