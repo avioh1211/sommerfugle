@@ -179,8 +179,11 @@
     }
     @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 
-    /* ─── PRINT OVERLAY ────────────────────────────────────────────────────── */
-    .print-overlay { position: fixed; inset: 0; background: #fff; z-index: 300; overflow-y: auto; }
+    /* ─── PRINT OVERLAY (screen) ───────────────────────────────────────────── */
+    .print-overlay {
+      position: fixed; inset: 0; background: #fff;
+      z-index: 300; overflow-y: auto;
+    }
     .print-toolbar {
       background: var(--forest); color: #fff; padding: 12px 28px;
       display: flex; align-items: center; justify-content: space-between;
@@ -204,7 +207,6 @@
     .doc-head h1 { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--forest); margin-bottom: 5px; }
     .doc-head p  { font-size: 12px; color: var(--moss); letter-spacing: .06em; }
 
-    /* 2-column card grid */
     .doc-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -218,20 +220,17 @@
       page-break-inside: avoid;
       break-inside: avoid;
     }
-
-    /* ── WHITE FRAME AROUND PHOTOS ─────────────────────────────────────────── */
     .doc-card-imgs {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0;
-      background: #fff;          /* white gap between the two photos */
-      padding: 6px;              /* white border around the whole photo area */
-      gap: 6px;                  /* white gap between butterfly and plant photo */
+      background: #fff;
+      padding: 6px;
+      gap: 6px;
     }
     .doc-card-img-wrap {
       position: relative;
       overflow: hidden;
-      border-radius: 6px;        /* rounded corners on each photo */
+      border-radius: 6px;
     }
     .doc-card-img-wrap img {
       width: 100%;
@@ -259,7 +258,6 @@
       text-transform: uppercase;
       padding: 3px 7px;
     }
-
     .doc-card-body {
       padding: 10px 14px 12px;
       display: flex;
@@ -307,15 +305,38 @@
       font-size: 10px; color: #aaa; text-align: center;
     }
 
-    /* ─── PRINT MEDIA ──────────────────────────────────────────────────────── */
+    /* ─── THE KEY FIX: PRINT MEDIA QUERY ──────────────────────────────────── */
     @media print {
+      /* Hide everything on the page except the print overlay */
+      body > *:not(#print-view) { display: none !important; }
+
+      /* Make print-view behave like a normal document, not a fixed overlay */
+      #print-view {
+        position: static !important;
+        overflow: visible !important;
+        background: #fff;
+      }
+
+      /* Hide the toolbar buttons */
       .print-toolbar { display: none !important; }
-      .print-overlay { position: absolute; overflow: visible; }
-      .doc { max-width: 100%; padding: 16px 16px 24px; }
-      .doc-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-      .doc-card-imgs { padding: 5px; gap: 5px; }
+
+      /* Tighten up spacing */
+      .doc {
+        max-width: 100%;
+        padding: 10px 14px 20px;
+      }
+      .doc-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .doc-card-imgs {
+        padding: 4px;
+        gap: 4px;
+      }
       .doc-card-img-wrap img,
-      .doc-card-img-wrap .doc-no-img { height: 150px; }
+      .doc-card-img-wrap .doc-no-img {
+        height: 140px;
+      }
     }
   </style>
 </head>
