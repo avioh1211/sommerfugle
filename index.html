@@ -179,7 +179,7 @@
     }
     @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 
-    /* ─── PRINT OVERLAY (screen view) ─────────────────────────────────────── */
+    /* ─── PRINT OVERLAY ────────────────────────────────────────────────────── */
     .print-overlay { position: fixed; inset: 0; background: #fff; z-index: 300; overflow-y: auto; }
     .print-toolbar {
       background: var(--forest); color: #fff; padding: 12px 28px;
@@ -204,7 +204,7 @@
     .doc-head h1 { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--forest); margin-bottom: 5px; }
     .doc-head p  { font-size: 12px; color: var(--moss); letter-spacing: .06em; }
 
-    /* Card-style grid for print — 2 columns */
+    /* 2-column card grid */
     .doc-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -218,14 +218,20 @@
       page-break-inside: avoid;
       break-inside: avoid;
     }
+
+    /* ── WHITE FRAME AROUND PHOTOS ─────────────────────────────────────────── */
     .doc-card-imgs {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0;
+      background: #fff;          /* white gap between the two photos */
+      padding: 6px;              /* white border around the whole photo area */
+      gap: 6px;                  /* white gap between butterfly and plant photo */
     }
     .doc-card-img-wrap {
       position: relative;
       overflow: hidden;
+      border-radius: 6px;        /* rounded corners on each photo */
     }
     .doc-card-img-wrap img {
       width: 100%;
@@ -253,6 +259,7 @@
       text-transform: uppercase;
       padding: 3px 7px;
     }
+
     .doc-card-body {
       padding: 10px 14px 12px;
       display: flex;
@@ -304,19 +311,11 @@
     @media print {
       .print-toolbar { display: none !important; }
       .print-overlay { position: absolute; overflow: visible; }
-
-      .doc {
-        max-width: 100%;
-        padding: 16px 16px 24px;
-      }
-      .doc-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-      }
+      .doc { max-width: 100%; padding: 16px 16px 24px; }
+      .doc-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .doc-card-imgs { padding: 5px; gap: 5px; }
       .doc-card-img-wrap img,
-      .doc-card-img-wrap .doc-no-img {
-        height: 150px;
-      }
+      .doc-card-img-wrap .doc-no-img { height: 150px; }
     }
   </style>
 </head>
@@ -466,7 +465,6 @@
       <h1>Dagsommerfugle i Gladsaxe Kommune</h1>
       <p id="doc-subtitle">Sorteret efter flyvetid</p>
     </div>
-    <!-- Card grid instead of table -->
     <div class="doc-grid" id="doc-grid"></div>
     <div class="doc-footer" id="doc-footer"></div>
   </div>
@@ -495,10 +493,10 @@
   const db  = getFirestore(app);
   const col = collection(db, "sommerfugle");
 
-  window._db       = db;
-  window._col      = col;
-  window._docRef   = (id) => doc(db, "sommerfugle", id);
-  window._addDoc   = addDoc;
+  window._db        = db;
+  window._col       = col;
+  window._docRef    = (id) => doc(db, "sommerfugle", id);
+  window._addDoc    = addDoc;
   window._updateDoc = updateDoc;
   window._deleteDoc = deleteDoc;
 
@@ -525,8 +523,7 @@
 
   function showNotif(msg) {
     const el = document.getElementById("notif");
-    el.textContent = msg;
-    el.style.display = "block";
+    el.textContent = msg; el.style.display = "block";
     setTimeout(() => el.style.display = "none", 2400);
   }
 
@@ -542,9 +539,7 @@
     if (url) {
       img.src = url; img.style.display = "block";
       img.onerror = () => img.style.display = "none";
-    } else {
-      img.style.display = "none";
-    }
+    } else { img.style.display = "none"; }
   }
 
   function updateLinks() {
@@ -651,9 +646,7 @@
     document.getElementById("modal").style.display = "flex";
   }
 
-  function closeModal() {
-    document.getElementById("modal").style.display = "none";
-  }
+  function closeModal() { document.getElementById("modal").style.display = "none"; }
 
   async function saveEdit() {
     const id   = document.getElementById("m-id").value;
@@ -714,9 +707,7 @@
     document.getElementById("print-view").style.display = "block";
   }
 
-  function closePrint() {
-    document.getElementById("print-view").style.display = "none";
-  }
+  function closePrint() { document.getElementById("print-view").style.display = "none"; }
 
   window.addRow           = addRow;
   window.deleteRow        = deleteRow;
