@@ -300,51 +300,62 @@
   import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
   import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-  // Standard Firebase setup according to rules
-  const firebaseConfig = JSON.parse(__firebase_config);
-  const appId = typeof __app_id !== 'undefined' ? __app_id : 'butterfly-guide';
-  
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  const COLL_PATH = `artifacts/${appId}/public/data/sommerfugle`;
-  let rows = [];
-
-  window.dbFunctions = {
-    add: (data) => addDoc(collection(db, COLL_PATH), data),
-    update: (id, data) => updateDoc(doc(db, COLL_PATH, id), data),
-    remove: (id) => deleteDoc(doc(db, COLL_PATH, id))
+  // Robust check for injected environment variables
+  const getFirebaseConfig = () => {
+    if (typeof window.__firebase_config !== 'undefined' && window.__firebase_config) {
+      return JSON.parse(window.__firebase_config);
+    }
+    return null;
   };
 
-  async function initAuth() {
-    try {
-      if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-        await signInWithCustomToken(auth, __initial_auth_token);
-      } else {
-        await signInAnonymously(auth);
+  const firebaseConfig = getFirebaseConfig();
+  if (!firebaseConfig) {
+    console.warn("Firebase configuration not found. Retrying in 500ms...");
+    setTimeout(() => location.reload(), 500);
+  } else {
+    const appId = typeof window.__app_id !== 'undefined' ? window.__app_id : 'butterfly-guide';
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const COLL_PATH = `artifacts/${appId}/public/data/sommerfugle`;
+    let rows = [];
+
+    window.dbFunctions = {
+      add: (data) => addDoc(collection(db, COLL_PATH), data),
+      update: (id, data) => updateDoc(doc(db, COLL_PATH, id), data),
+      remove: (id) => deleteDoc(doc(db, COLL_PATH, id))
+    };
+
+    const initAuth = async () => {
+      try {
+        if (typeof window.__initial_auth_token !== 'undefined' && window.__initial_auth_token) {
+          await signInWithCustomToken(auth, window.__initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+      } catch (err) {
+        console.error("Auth error:", err);
       }
-    } catch (err) {
-      console.error("Auth error:", err);
-    }
+    };
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const colRef = collection(db, COLL_PATH);
+        onSnapshot(colRef, (snapshot) => {
+          rows = [];
+          snapshot.forEach(doc => rows.push({ id: doc.id, ...doc.data() }));
+          rows.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          window._rows = rows;
+          if (typeof renderList === 'function') renderList();
+        }, (err) => {
+          console.error("Snapshot error:", err);
+        });
+      }
+    });
+
+    initAuth();
   }
-
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      const colRef = collection(db, COLL_PATH);
-      onSnapshot(colRef, (snapshot) => {
-        rows = [];
-        snapshot.forEach(doc => rows.push({ id: doc.id, ...doc.data() }));
-        rows.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-        window._rows = rows;
-        renderList();
-      }, (err) => {
-        console.error("Snapshot error:", err);
-      });
-    }
-  });
-
-  initAuth();
 </script>
 
 <script>
@@ -376,6 +387,8 @@
       };
     }
 
+    const backoff = (retry) => new Promise(r => setTimeout(r, Math.pow(2, retry) * 1000));
+
     while (retries < maxRetries) {
       try {
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
@@ -384,18 +397,21 @@
           body: JSON.stringify(payload)
         });
         
+        if (!response.ok) throw new Error("API call failed");
+        
         const result = await response.json();
         return result.candidates?.[0]?.content?.parts?.[0]?.text;
       } catch (e) {
         retries++;
-        await new Promise(r => setTimeout(r, Math.pow(2, retries) * 1000));
+        if (retries === maxRetries) throw e;
+        await backoff(retries);
       }
     }
-    throw new Error("Kunne ikke kontakte AI-guiden");
   }
 
   async function smartFillDetails() {
-    const name = document.getElementById("f-name").value.trim();
+    const nameInput = document.getElementById("f-name");
+    const name = nameInput.value.trim();
     if (!name) return showNotif("Indtast venligst et navn først");
     
     const btn = document.getElementById("btn-smart-fill");
@@ -412,7 +428,7 @@
       updateLinks();
       showNotif("Info udfyldt af AI ✨");
     } catch (e) {
-      showNotif("Fejl: Kunne ikke hente info.");
+      showNotif("AI kunne ikke hente info.");
     } finally {
       btn.disabled = false;
       btn.textContent = "✨ Autofyld info";
@@ -420,7 +436,8 @@
   }
 
   async function identifyButterfly() {
-    const desc = document.getElementById("ai-desc").value.trim();
+    const descInput = document.getElementById("ai-desc");
+    const desc = descInput.value.trim();
     if (!desc) return showNotif("Beskriv venligst hvad du har set");
     
     const btn = document.getElementById("btn-id-butterfly");
@@ -470,6 +487,7 @@
   // STANDARD UI LOGIC
   function showNotif(msg) {
     const container = document.getElementById("notif-container");
+    if (!container) return;
     const el = document.createElement("div");
     el.className = "notif";
     el.textContent = msg;
@@ -483,13 +501,14 @@
   }
 
   function previewImg(inputId, previewId) {
-    const url = document.getElementById(inputId).value.trim();
+    const input = document.getElementById(inputId);
+    const url = input ? input.value.trim() : "";
     const img = document.getElementById(previewId);
-    if (url) {
+    if (url && img) {
       img.src = url;
       img.style.display = "block";
       img.onerror = () => { img.style.display = "none"; };
-    } else {
+    } else if (img) {
       img.style.display = "none";
     }
   }
@@ -499,22 +518,30 @@
     const plant = document.getElementById("f-plant").value;
     const lbf = document.getElementById("link-bf");
     const lpl = document.getElementById("link-pl");
-    lbf.href = googleUrl(name);
-    lbf.classList.toggle("disabled", !name.trim());
-    lpl.href = googleUrl(plant);
-    lpl.classList.toggle("disabled", !plant.trim());
-    document.getElementById("btn-add").disabled = !name.trim();
+    if (lbf) {
+      lbf.href = googleUrl(name);
+      lbf.classList.toggle("disabled", !name.trim());
+    }
+    if (lpl) {
+      lpl.href = googleUrl(plant);
+      lpl.classList.toggle("disabled", !plant.trim());
+    }
+    const btnAdd = document.getElementById("btn-add");
+    if (btnAdd) btnAdd.disabled = !name.trim();
   }
 
   function updateModalLinks() {
-    document.getElementById("modal-ai-fact").textContent = "";
+    const box = document.getElementById("modal-ai-fact");
+    if (box) box.textContent = "";
   }
 
   function renderList() {
     const list = document.getElementById("species-list");
     const count = document.getElementById("count");
     const data = window._rows || [];
-    count.textContent = data.length;
+    if (count) count.textContent = data.length;
+    if (!list) return;
+    
     list.innerHTML = "";
 
     if (data.length === 0) {
@@ -546,9 +573,8 @@
   }
 
   async function handleAdd() {
-    const name = document.getElementById("f-name").value.trim();
     const data = {
-      name,
+      name: document.getElementById("f-name").value.trim(),
       plant: document.getElementById("f-plant").value.trim(),
       flight: document.getElementById("f-flight").value.trim(),
       bfImg: document.getElementById("f-bfImg").value.trim(),
@@ -556,33 +582,48 @@
       createdAt: Date.now()
     };
     try {
-      await window.dbFunctions.add(data);
-      ["f-name", "f-plant", "f-flight", "f-bfImg", "f-plImg"].forEach(id => document.getElementById(id).value = "");
-      previewImg('f-bfImg', 'prev-bf');
-      previewImg('f-plImg', 'prev-pl');
-      updateLinks();
-      showNotif("Observation gemt!");
-    } catch (e) { showNotif("Fejl."); }
+      if (window.dbFunctions) {
+        await window.dbFunctions.add(data);
+        ["f-name", "f-plant", "f-flight", "f-bfImg", "f-plImg"].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = "";
+        });
+        previewImg('f-bfImg', 'prev-bf');
+        previewImg('f-plImg', 'prev-pl');
+        updateLinks();
+        showNotif("Observation gemt!");
+      }
+    } catch (e) { showNotif("Kunne ikke gemme."); }
   }
 
   async function handleDelete(id) {
-    if (confirm("Slet registrering?")) {
+    if (confirm("Slet registrering?") && window.dbFunctions) {
       await window.dbFunctions.remove(id);
       showNotif("Slettet.");
     }
   }
 
   function openEdit(item) {
-    document.getElementById("m-id").value = item.id;
-    document.getElementById("m-name").value = item.name || "";
-    document.getElementById("m-flight").value = item.flight || "";
-    document.getElementById("m-bfImg").value = item.bfImg || "";
+    const mid = document.getElementById("m-id");
+    const mname = document.getElementById("m-name");
+    const mflight = document.getElementById("m-flight");
+    const mbfimg = document.getElementById("m-bfImg");
+    
+    if (mid) mid.value = item.id;
+    if (mname) mname.value = item.name || "";
+    if (mflight) mflight.value = item.flight || "";
+    if (mbfimg) mbfimg.value = item.bfImg || "";
+    
     previewImg('m-bfImg', 'm-prev-bf');
-    document.getElementById("modal-ai-fact").textContent = "Tryk på knappen for en sjov fakta om denne art!";
+    const factBox = document.getElementById("modal-ai-fact");
+    if (factBox) factBox.textContent = "Tryk på knappen for en sjov fakta om denne art!";
     document.getElementById("modal").style.display = "flex";
   }
 
-  function closeModal() { document.getElementById("modal").style.display = "none"; }
+  function closeModal() {
+    const modal = document.getElementById("modal");
+    if (modal) modal.style.display = "none";
+  }
 
   async function handleSaveEdit() {
     const id = document.getElementById("m-id").value;
@@ -592,26 +633,34 @@
       bfImg: document.getElementById("m-bfImg").value.trim(),
       updatedAt: Date.now()
     };
-    await window.dbFunctions.update(id, data);
-    closeModal();
-    showNotif("Opdateret!");
+    if (window.dbFunctions) {
+      await window.dbFunctions.update(id, data);
+      closeModal();
+      showNotif("Opdateret!");
+    }
   }
 
   function openPrint() {
     const data = window._rows || [];
     const tbody = document.getElementById("doc-tbody");
-    tbody.innerHTML = data.map(item => `
-      <tr>
-        <td style="padding:10px; border-bottom:1px solid #ddd;"><strong>${item.name}</strong></td>
-        <td style="padding:10px; border-bottom:1px solid #ddd;">${item.plant || ''}</td>
-        <td style="padding:10px; border-bottom:1px solid #ddd;">${item.flight || ''}</td>
-        <td style="padding:10px; border-bottom:1px solid #ddd;"><span style="display:inline-block; border-bottom:1px solid #000; width:80px; height:15px;"></span></td>
-      </tr>
-    `).join("");
-    document.getElementById("print-view").style.display = "block";
+    if (tbody) {
+      tbody.innerHTML = data.map(item => `
+        <tr>
+          <td style="padding:10px; border-bottom:1px solid #ddd;"><strong>${item.name}</strong></td>
+          <td style="padding:10px; border-bottom:1px solid #ddd;">${item.plant || ''}</td>
+          <td style="padding:10px; border-bottom:1px solid #ddd;">${item.flight || ''}</td>
+          <td style="padding:10px; border-bottom:1px solid #ddd;"><span style="display:inline-block; border-bottom:1px solid #000; width:80px; height:15px;"></span></td>
+        </tr>
+      `).join("");
+    }
+    const printView = document.getElementById("print-view");
+    if (printView) printView.style.display = "block";
   }
 
-  function closePrint() { document.getElementById("print-view").style.display = "none"; }
+  function closePrint() {
+    const printView = document.getElementById("print-view");
+    if (printView) printView.style.display = "none";
+  }
 </script>
 
 </body>
