@@ -300,62 +300,56 @@
   import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
   import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-  // Configuration check
-  const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+  // Standard Firebase setup according to rules
+  const firebaseConfig = JSON.parse(__firebase_config);
   const appId = typeof __app_id !== 'undefined' ? __app_id : 'butterfly-guide';
   
-  if (!firebaseConfig) {
-    document.getElementById("empty-state").textContent = "Systemfejl: Database-konfiguration mangler.";
-  } else {
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-    const COLL_PATH = `artifacts/${appId}/public/data/sommerfugle`;
-    let rows = [];
+  const COLL_PATH = `artifacts/${appId}/public/data/sommerfugle`;
+  let rows = [];
 
-    window.dbFunctions = {
-      add: (data) => addDoc(collection(db, COLL_PATH), data),
-      update: (id, data) => updateDoc(doc(db, COLL_PATH, id), data),
-      remove: (id) => deleteDoc(doc(db, COLL_PATH, id))
-    };
+  window.dbFunctions = {
+    add: (data) => addDoc(collection(db, COLL_PATH), data),
+    update: (id, data) => updateDoc(doc(db, COLL_PATH, id), data),
+    remove: (id) => deleteDoc(doc(db, COLL_PATH, id))
+  };
 
-    async function initAuth() {
-      try {
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          await signInWithCustomToken(auth, __initial_auth_token);
-        } else {
-          await signInAnonymously(auth);
-        }
-      } catch (err) {
-        console.error("Auth error:", err);
-        document.getElementById("empty-state").textContent = "Kunne ikke forbinde til serveren (Login fejl).";
+  async function initAuth() {
+    try {
+      if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+        await signInWithCustomToken(auth, __initial_auth_token);
+      } else {
+        await signInAnonymously(auth);
       }
+    } catch (err) {
+      console.error("Auth error:", err);
     }
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const colRef = collection(db, COLL_PATH);
-        onSnapshot(colRef, (snapshot) => {
-          rows = [];
-          snapshot.forEach(doc => rows.push({ id: doc.id, ...doc.data() }));
-          rows.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-          window._rows = rows;
-          renderList();
-        }, (err) => {
-          console.error("Snapshot error:", err);
-          document.getElementById("empty-state").textContent = "Forbindelsesfejl til databasen. Prøv igen senere.";
-        });
-      }
-    });
-
-    initAuth();
   }
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const colRef = collection(db, COLL_PATH);
+      onSnapshot(colRef, (snapshot) => {
+        rows = [];
+        snapshot.forEach(doc => rows.push({ id: doc.id, ...doc.data() }));
+        rows.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        window._rows = rows;
+        renderList();
+      }, (err) => {
+        console.error("Snapshot error:", err);
+      });
+    }
+  });
+
+  initAuth();
 </script>
 
 <script>
   // ✨ GEMINI API INTEGRATION
-  const apiKey = ""; // Provided by environment
+  const apiKey = ""; 
 
   async function callGemini(prompt, isJson = false) {
     let retries = 0;
