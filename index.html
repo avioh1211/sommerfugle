@@ -1,4 +1,19 @@
-<!DOCTYPE html>
+
+                        <!DOCTYPE html>
+                        <html lang="en">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+							<style>
+								body {
+									background-color: white; /* Ensure the iframe has a white background */
+								}
+
+								
+							</style>
+                        </head>
+                        <body>
+                            <!DOCTYPE html>
 <html lang="da">
 <head>
   <meta charset="UTF-8" />
@@ -68,7 +83,13 @@
     .search-link.disabled { opacity: .35; pointer-events: none; }
     .img-row { display: flex; gap: 8px; align-items: center; margin-top: 2px; }
     .img-row input { font-size: 12px; color: #888; }
-    .img-preview { width: 50px; height: 38px; object-fit: cover; border-radius: 6px; border: 1px solid var(--mist); flex-shrink: 0; }
+
+    /* BIGGER PREVIEW */
+    .img-preview {
+      width: 90px; height: 70px; object-fit: cover;
+      border-radius: 6px; border: 1px solid var(--mist); flex-shrink: 0;
+    }
+
     .img-hint { font-size: 11px; color: #bbb; line-height: 1.5; }
     .step-divider { height: 1px; background: var(--mist); margin: 2px 0; }
     .btn-add {
@@ -80,9 +101,10 @@
     .btn-add:hover { background: #d4a440; }
     .btn-add:disabled { opacity: .4; cursor: default; }
 
-    /* LIST */
+    /* LIST — wider image columns */
     .list-header {
-      display: grid; grid-template-columns: 52px 1fr 52px 1fr 145px 70px;
+      display: grid;
+      grid-template-columns: 92px 1fr 92px 1fr 145px 70px;
       background: var(--forest);
     }
     .list-header span {
@@ -91,20 +113,24 @@
     }
     .species-list { display: flex; flex-direction: column; }
     .species-row {
-      display: grid; grid-template-columns: 52px 1fr 52px 1fr 145px 70px;
+      display: grid;
+      grid-template-columns: 92px 1fr 92px 1fr 145px 70px;
       align-items: center; border-bottom: 1px solid var(--mist);
       transition: background .12s; cursor: pointer;
     }
     .species-row:hover { background: var(--cream); }
     .species-row:last-child { border-bottom: none; }
     .s-img { padding: 6px 5px; }
+
+    /* BIGGER LIST IMAGES */
     .s-img img, .s-img .no-img {
-      width: 42px; height: 34px; object-fit: cover; border-radius: 5px; display: block;
+      width: 80px; height: 64px; object-fit: cover; border-radius: 5px; display: block;
     }
     .s-img .no-img {
       background: var(--mist); display: flex; align-items: center; justify-content: center;
-      font-size: 17px; border: 1px dashed var(--sage);
+      font-size: 22px; border: 1px dashed var(--sage);
     }
+
     .s-cell { padding: 10px 12px; font-size: 13px; font-weight: 500; }
     .flight-badge {
       display: inline-block; background: var(--mist); color: var(--forest);
@@ -203,12 +229,19 @@
     .doc-table thead th { padding: 9px 12px; color: var(--sage); font-size: 10px; text-transform: uppercase; letter-spacing: .08em; text-align: left; }
     .doc-table tbody tr:nth-child(even) { background: var(--mist); }
     .doc-table td { padding: 9px 12px; vertical-align: middle; border-bottom: 1px solid var(--parchment); font-size: 12px; }
-    .doc-img { width: 52px; height: 40px; object-fit: cover; border-radius: 4px; display: block; }
-    .doc-no-img { width: 52px; height: 40px; background: var(--mist); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+
+    /* BIGGER PRINT IMAGES */
+    .doc-img {
+      width: 90px; height: 70px; object-fit: cover; border-radius: 4px; display: block;
+    }
+    .doc-no-img {
+      width: 90px; height: 70px; background: var(--mist); border-radius: 4px;
+      display: flex; align-items: center; justify-content: center; font-size: 26px;
+    }
+
     .doc-name { font-weight: 600; font-size: 12px; }
     .doc-fund-line { border-bottom: 1px solid #bbb; height: 22px; min-width: 90px; display: block; }
     .doc-footer { margin-top: 28px; padding-top: 14px; border-top: 1px solid var(--parchment); font-size: 10px; color: #aaa; text-align: center; }
-
     @media print { .print-toolbar { display: none !important; } }
   </style>
 </head>
@@ -306,7 +339,6 @@
     </div>
     <div class="modal-body">
       <input type="hidden" id="m-id" />
-
       <div class="step">
         <div class="step-label"><div class="step-num">1</div>Sommerfugl navn</div>
         <div class="step-row">
@@ -319,9 +351,7 @@
         </div>
         <div class="img-hint">Åbn Wikimedia · klik på et billede · højreklik · "Kopier billedadresse" · indsæt ovenfor</div>
       </div>
-
       <div class="step-divider"></div>
-
       <div class="step">
         <div class="step-label"><div class="step-num">2</div>Foderplante navn</div>
         <div class="step-row">
@@ -334,9 +364,7 @@
         </div>
         <div class="img-hint">Åbn Wikimedia · klik på et billede · højreklik · "Kopier billedadresse" · indsæt ovenfor</div>
       </div>
-
       <div class="step-divider"></div>
-
       <div class="step">
         <div class="step-label"><div class="step-num">3</div>Flyvetid</div>
         <input type="text" id="m-flight" placeholder="f.eks. Marts – Oktober" style="max-width:260px" />
@@ -398,7 +426,6 @@
   const db = getFirestore(app);
   const col = collection(db, "sommerfugle");
 
-  // ── Expose DB functions to global scope ──────────────────────────────────────
   window._db = db;
   window._col = col;
   window._docRef = (id) => doc(db, "sommerfugle", id);
@@ -406,7 +433,6 @@
   window._updateDoc = updateDoc;
   window._deleteDoc = deleteDoc;
 
-  // ── Real-time listener ───────────────────────────────────────────────────────
   const q = query(col, orderBy("createdAt", "asc"));
   onSnapshot(q, (snapshot) => {
     window._rows = [];
@@ -420,12 +446,12 @@
 </script>
 
 <script>
-  // ── State ────────────────────────────────────────────────────────────────────
   window._rows = [];
 
-  // ── Helpers ──────────────────────────────────────────────────────────────────
   function googleUrl(name) {
-    return name.trim() ? `https://commons.wikimedia.org/w/index.php?search=${encodeURIComponent(name)}&title=Special:MediaSearch&type=image` : null;
+    return name.trim()
+      ? `https://commons.wikimedia.org/w/index.php?search=${encodeURIComponent(name)}&title=Special:MediaSearch&type=image`
+      : null;
   }
 
   function showNotif(msg) {
@@ -455,38 +481,32 @@
   }
 
   function updateLinks() {
-    const name = document.getElementById("f-name").value.trim();
+    const name  = document.getElementById("f-name").value.trim();
     const plant = document.getElementById("f-plant").value.trim();
-    const lbf = document.getElementById("link-bf");
-    const lpl = document.getElementById("link-pl");
-    const btn = document.getElementById("btn-add");
-
-    if (name) { lbf.href = googleUrl(name); lbf.classList.remove("disabled"); }
-    else { lbf.href = "#"; lbf.classList.add("disabled"); }
-
+    const lbf   = document.getElementById("link-bf");
+    const lpl   = document.getElementById("link-pl");
+    const btn   = document.getElementById("btn-add");
+    if (name)  { lbf.href = googleUrl(name);  lbf.classList.remove("disabled"); }
+    else       { lbf.href = "#";              lbf.classList.add("disabled"); }
     if (plant) { lpl.href = googleUrl(plant); lpl.classList.remove("disabled"); }
-    else { lpl.href = "#"; lpl.classList.add("disabled"); }
-
+    else       { lpl.href = "#";              lpl.classList.add("disabled"); }
     btn.disabled = !name;
   }
 
   function updateModalLinks() {
-    const name = document.getElementById("m-name").value.trim();
+    const name  = document.getElementById("m-name").value.trim();
     const plant = document.getElementById("m-plant").value.trim();
-    const lbf = document.getElementById("m-link-bf");
-    const lpl = document.getElementById("m-link-pl");
-
-    if (name) { lbf.href = googleUrl(name); lbf.classList.remove("disabled"); }
-    else { lbf.href = "#"; lbf.classList.add("disabled"); }
-
+    const lbf   = document.getElementById("m-link-bf");
+    const lpl   = document.getElementById("m-link-pl");
+    if (name)  { lbf.href = googleUrl(name);  lbf.classList.remove("disabled"); }
+    else       { lbf.href = "#";              lbf.classList.add("disabled"); }
     if (plant) { lpl.href = googleUrl(plant); lpl.classList.remove("disabled"); }
-    else { lpl.href = "#"; lpl.classList.add("disabled"); }
+    else       { lpl.href = "#";              lpl.classList.add("disabled"); }
   }
 
-  // ── Render list ───────────────────────────────────────────────────────────────
   function renderList() {
-    const rows = window._rows;
-    const list = document.getElementById("species-list");
+    const rows  = window._rows;
+    const list  = document.getElementById("species-list");
     const empty = document.getElementById("empty-state");
     document.getElementById("count").textContent = rows.length;
 
@@ -497,54 +517,52 @@
       return;
     }
     empty.style.display = "none";
-
-    // Re-render all rows
     list.querySelectorAll(".species-row").forEach(el => el.remove());
+
     rows.forEach(row => {
       const div = document.createElement("div");
       div.className = "species-row";
       div.onclick = () => openEdit(row);
       div.innerHTML = `
-        <div class="s-img">${row.bfImg
-          ? `<img src="${row.bfImg}" alt="${row.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-          : ''}<div class="no-img" style="${row.bfImg ? 'display:none' : ''}">🦋</div></div>
+        <div class="s-img">
+          ${row.bfImg ? `<img src="${row.bfImg}" alt="${row.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : ''}
+          <div class="no-img" style="${row.bfImg ? 'display:none' : ''}">🦋</div>
+        </div>
         <div class="s-cell">${row.name}</div>
-        <div class="s-img">${row.plImg
-          ? `<img src="${row.plImg}" alt="${row.plant}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-          : ''}<div class="no-img" style="${row.plImg ? 'display:none' : ''}">🌿</div></div>
+        <div class="s-img">
+          ${row.plImg ? `<img src="${row.plImg}" alt="${row.plant}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : ''}
+          <div class="no-img" style="${row.plImg ? 'display:none' : ''}">🌿</div>
+        </div>
         <div class="s-cell">${row.plant || '<span style="color:#ccc">—</span>'}</div>
         <div class="s-cell"><span class="flight-badge">${row.flight || '—'}</span></div>
         <div class="row-actions">
           <button class="btn-edit" title="Rediger" onclick="event.stopPropagation();openEdit(${JSON.stringify(row).replace(/"/g, '&quot;')})">✏️</button>
-          <button class="btn-del" title="Slet" onclick="event.stopPropagation();deleteRow('${row.id}')">✕</button>
+          <button class="btn-del"  title="Slet"    onclick="event.stopPropagation();deleteRow('${row.id}')">✕</button>
         </div>`;
       list.appendChild(div);
     });
   }
 
-  // ── Add ───────────────────────────────────────────────────────────────────────
   async function addRow() {
     const name = document.getElementById("f-name").value.trim();
     if (!name) return;
     const data = {
       name,
-      plant: document.getElementById("f-plant").value.trim(),
-      flight: document.getElementById("f-flight").value.trim(),
-      bfImg: document.getElementById("f-bfImg").value.trim(),
-      plImg: document.getElementById("f-plImg").value.trim(),
+      plant:     document.getElementById("f-plant").value.trim(),
+      flight:    document.getElementById("f-flight").value.trim(),
+      bfImg:     document.getElementById("f-bfImg").value.trim(),
+      plImg:     document.getElementById("f-plImg").value.trim(),
       createdAt: Date.now()
     };
     showStatus("Gemmer…");
     await window._addDoc(window._col, data);
-    // Clear form
     ["f-name","f-plant","f-flight","f-bfImg","f-plImg"].forEach(id => document.getElementById(id).value = "");
-    ["prev-bf","prev-pl"].forEach(id => { document.getElementById(id).style.display="none"; });
+    ["prev-bf","prev-pl"].forEach(id => { document.getElementById(id).style.display = "none"; });
     document.getElementById("btn-add").disabled = true;
     ["link-bf","link-pl"].forEach(id => document.getElementById(id).classList.add("disabled"));
     showNotif("Art tilføjet ✓");
   }
 
-  // ── Delete ────────────────────────────────────────────────────────────────────
   async function deleteRow(id) {
     if (!confirm("Slet denne art?")) return;
     showStatus("Sletter…");
@@ -552,15 +570,14 @@
     showNotif("Art slettet");
   }
 
-  // ── Edit modal ────────────────────────────────────────────────────────────────
   function openEdit(row) {
-    document.getElementById("m-id").value = row.id;
+    document.getElementById("m-id").value             = row.id;
     document.getElementById("modal-title").textContent = "Rediger: " + row.name;
-    document.getElementById("m-name").value = row.name || "";
-    document.getElementById("m-plant").value = row.plant || "";
-    document.getElementById("m-flight").value = row.flight || "";
-    document.getElementById("m-bfImg").value = row.bfImg || "";
-    document.getElementById("m-plImg").value = row.plImg || "";
+    document.getElementById("m-name").value           = row.name   || "";
+    document.getElementById("m-plant").value          = row.plant  || "";
+    document.getElementById("m-flight").value         = row.flight || "";
+    document.getElementById("m-bfImg").value          = row.bfImg  || "";
+    document.getElementById("m-plImg").value          = row.plImg  || "";
     previewImg("m-bfImg", "m-prev-bf");
     previewImg("m-plImg", "m-prev-pl");
     updateModalLinks();
@@ -572,13 +589,13 @@
   }
 
   async function saveEdit() {
-    const id = document.getElementById("m-id").value;
+    const id   = document.getElementById("m-id").value;
     const data = {
-      name: document.getElementById("m-name").value.trim(),
-      plant: document.getElementById("m-plant").value.trim(),
+      name:   document.getElementById("m-name").value.trim(),
+      plant:  document.getElementById("m-plant").value.trim(),
       flight: document.getElementById("m-flight").value.trim(),
-      bfImg: document.getElementById("m-bfImg").value.trim(),
-      plImg: document.getElementById("m-plImg").value.trim(),
+      bfImg:  document.getElementById("m-bfImg").value.trim(),
+      plImg:  document.getElementById("m-plImg").value.trim(),
     };
     showStatus("Gemmer ændringer…");
     await window._updateDoc(window._docRef(id), data);
@@ -586,14 +603,12 @@
     showNotif("Ændringer gemt ✓");
   }
 
-  // ── Print ─────────────────────────────────────────────────────────────────────
   function openPrint() {
     const rows = window._rows;
     document.getElementById("doc-subtitle").textContent =
       `De ${rows.length} arter · sorteret efter flyvetid`;
     document.getElementById("doc-footer").textContent =
       `Naturguide · Gladsaxe Kommune · Opdateret ${new Date().toLocaleDateString("da-DK")}`;
-
     const tbody = document.getElementById("doc-tbody");
     tbody.innerHTML = rows.map(row => `
       <tr>
@@ -608,7 +623,6 @@
         <td style="text-align:center">${row.flight || ''}</td>
         <td><span class="doc-fund-line"></span></td>
       </tr>`).join("");
-
     document.getElementById("print-view").style.display = "block";
   }
 
@@ -616,18 +630,23 @@
     document.getElementById("print-view").style.display = "none";
   }
 
-  // Expose to HTML onclick handlers
-  window.addRow = addRow;
-  window.deleteRow = deleteRow;
-  window.openEdit = openEdit;
-  window.closeModal = closeModal;
-  window.saveEdit = saveEdit;
-  window.openPrint = openPrint;
-  window.closePrint = closePrint;
-  window.updateLinks = updateLinks;
+  window.addRow          = addRow;
+  window.deleteRow       = deleteRow;
+  window.openEdit        = openEdit;
+  window.closeModal      = closeModal;
+  window.saveEdit        = saveEdit;
+  window.openPrint       = openPrint;
+  window.closePrint      = closePrint;
+  window.updateLinks     = updateLinks;
   window.updateModalLinks = updateModalLinks;
-  window.previewImg = previewImg;
+  window.previewImg      = previewImg;
 </script>
-
 </body>
 </html>
+
+							<script>
+                            	
+							</script>
+                        </body>
+                        </html>
+                    
