@@ -1,19 +1,4 @@
-
-                        <!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-							<style>
-								body {
-									background-color: white; /* Ensure the iframe has a white background */
-								}
-
-								
-							</style>
-                        </head>
-                        <body>
-                            <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="da">
 <head>
   <meta charset="UTF-8" />
@@ -83,13 +68,7 @@
     .search-link.disabled { opacity: .35; pointer-events: none; }
     .img-row { display: flex; gap: 8px; align-items: center; margin-top: 2px; }
     .img-row input { font-size: 12px; color: #888; }
-
-    /* BIGGER PREVIEW */
-    .img-preview {
-      width: 90px; height: 70px; object-fit: cover;
-      border-radius: 6px; border: 1px solid var(--mist); flex-shrink: 0;
-    }
-
+    .img-preview { width: 90px; height: 70px; object-fit: cover; border-radius: 6px; border: 1px solid var(--mist); flex-shrink: 0; }
     .img-hint { font-size: 11px; color: #bbb; line-height: 1.5; }
     .step-divider { height: 1px; background: var(--mist); margin: 2px 0; }
     .btn-add {
@@ -101,10 +80,9 @@
     .btn-add:hover { background: #d4a440; }
     .btn-add:disabled { opacity: .4; cursor: default; }
 
-    /* LIST — wider image columns */
+    /* LIST */
     .list-header {
-      display: grid;
-      grid-template-columns: 92px 1fr 92px 1fr 145px 70px;
+      display: grid; grid-template-columns: 92px 1fr 92px 1fr 145px 70px;
       background: var(--forest);
     }
     .list-header span {
@@ -113,16 +91,13 @@
     }
     .species-list { display: flex; flex-direction: column; }
     .species-row {
-      display: grid;
-      grid-template-columns: 92px 1fr 92px 1fr 145px 70px;
+      display: grid; grid-template-columns: 92px 1fr 92px 1fr 145px 70px;
       align-items: center; border-bottom: 1px solid var(--mist);
       transition: background .12s; cursor: pointer;
     }
     .species-row:hover { background: var(--cream); }
     .species-row:last-child { border-bottom: none; }
     .s-img { padding: 6px 5px; }
-
-    /* BIGGER LIST IMAGES */
     .s-img img, .s-img .no-img {
       width: 80px; height: 64px; object-fit: cover; border-radius: 5px; display: block;
     }
@@ -130,7 +105,6 @@
       background: var(--mist); display: flex; align-items: center; justify-content: center;
       font-size: 22px; border: 1px dashed var(--sage);
     }
-
     .s-cell { padding: 10px 12px; font-size: 13px; font-weight: 500; }
     .flight-badge {
       display: inline-block; background: var(--mist); color: var(--forest);
@@ -205,7 +179,7 @@
     }
     @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 
-    /* PRINT OVERLAY */
+    /* ─── PRINT OVERLAY (screen view) ─────────────────────────────────────── */
     .print-overlay { position: fixed; inset: 0; background: #fff; z-index: 300; overflow-y: auto; }
     .print-toolbar {
       background: var(--forest); color: #fff; padding: 12px 28px;
@@ -220,29 +194,130 @@
       font-size: 13px; cursor: pointer;
     }
     .btn-close:hover { background: rgba(255,255,255,.1); }
-    .doc { max-width: 860px; margin: 0 auto; padding: 48px 48px 64px; }
-    .doc-head { text-align: center; padding-bottom: 22px; border-bottom: 2.5px solid var(--forest); margin-bottom: 26px; }
-    .doc-head h1 { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--forest); margin-bottom: 5px; }
-    .doc-head p { font-size: 12px; color: var(--moss); letter-spacing: .06em; }
-    .doc-table { width: 100%; border-collapse: collapse; }
-    .doc-table thead tr { background: var(--forest); }
-    .doc-table thead th { padding: 9px 12px; color: var(--sage); font-size: 10px; text-transform: uppercase; letter-spacing: .08em; text-align: left; }
-    .doc-table tbody tr:nth-child(even) { background: var(--mist); }
-    .doc-table td { padding: 9px 12px; vertical-align: middle; border-bottom: 1px solid var(--parchment); font-size: 12px; }
 
-    /* BIGGER PRINT IMAGES */
-    .doc-img {
-      width: 90px; height: 70px; object-fit: cover; border-radius: 4px; display: block;
+    /* ─── PRINT DOCUMENT ───────────────────────────────────────────────────── */
+    .doc { max-width: 900px; margin: 0 auto; padding: 36px 36px 48px; }
+    .doc-head {
+      text-align: center; padding-bottom: 18px;
+      border-bottom: 2.5px solid var(--forest); margin-bottom: 24px;
     }
-    .doc-no-img {
-      width: 90px; height: 70px; background: var(--mist); border-radius: 4px;
-      display: flex; align-items: center; justify-content: center; font-size: 26px;
+    .doc-head h1 { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--forest); margin-bottom: 5px; }
+    .doc-head p  { font-size: 12px; color: var(--moss); letter-spacing: .06em; }
+
+    /* Card-style grid for print — 2 columns */
+    .doc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .doc-card {
+      border: 1.5px solid var(--parchment);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .doc-card-imgs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .doc-card-img-wrap {
+      position: relative;
+      overflow: hidden;
+    }
+    .doc-card-img-wrap img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      display: block;
+    }
+    .doc-card-img-wrap .doc-no-img {
+      width: 100%;
+      height: 160px;
+      background: var(--mist);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+    }
+    .doc-card-img-label {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(30,58,15,.65);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      padding: 3px 7px;
+    }
+    .doc-card-body {
+      padding: 10px 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      border-top: 1.5px solid var(--mist);
+    }
+    .doc-card-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--forest);
+    }
+    .doc-card-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      color: var(--ink);
+    }
+    .doc-card-row span.lbl {
+      font-weight: 600;
+      color: var(--moss);
+      min-width: 68px;
+    }
+    .doc-badge {
+      display: inline-block;
+      background: var(--mist);
+      color: var(--forest);
+      border: 1px solid var(--sage);
+      border-radius: 20px;
+      padding: 2px 9px;
+      font-size: 10px;
+      font-weight: 500;
+    }
+    .doc-fund-line {
+      border-bottom: 1px solid #bbb;
+      flex: 1;
+      height: 16px;
+      display: block;
+    }
+    .doc-footer {
+      margin-top: 24px; padding-top: 12px;
+      border-top: 1px solid var(--parchment);
+      font-size: 10px; color: #aaa; text-align: center;
     }
 
-    .doc-name { font-weight: 600; font-size: 12px; }
-    .doc-fund-line { border-bottom: 1px solid #bbb; height: 22px; min-width: 90px; display: block; }
-    .doc-footer { margin-top: 28px; padding-top: 14px; border-top: 1px solid var(--parchment); font-size: 10px; color: #aaa; text-align: center; }
-    @media print { .print-toolbar { display: none !important; } }
+    /* ─── PRINT MEDIA ──────────────────────────────────────────────────────── */
+    @media print {
+      .print-toolbar { display: none !important; }
+      .print-overlay { position: absolute; overflow: visible; }
+
+      .doc {
+        max-width: 100%;
+        padding: 16px 16px 24px;
+      }
+      .doc-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .doc-card-img-wrap img,
+      .doc-card-img-wrap .doc-no-img {
+        height: 150px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -391,14 +466,8 @@
       <h1>Dagsommerfugle i Gladsaxe Kommune</h1>
       <p id="doc-subtitle">Sorteret efter flyvetid</p>
     </div>
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th></th><th>Sommerfugl</th><th></th><th>Foderplante</th><th>Flyvetid</th><th>Fund</th>
-        </tr>
-      </thead>
-      <tbody id="doc-tbody"></tbody>
-    </table>
+    <!-- Card grid instead of table -->
+    <div class="doc-grid" id="doc-grid"></div>
     <div class="doc-footer" id="doc-footer"></div>
   </div>
 </div>
@@ -410,7 +479,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
   import {
-    getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, onSnapshot, orderBy, query
+    getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, orderBy, query
   } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -423,13 +492,13 @@
   };
 
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  const db  = getFirestore(app);
   const col = collection(db, "sommerfugle");
 
-  window._db = db;
-  window._col = col;
-  window._docRef = (id) => doc(db, "sommerfugle", id);
-  window._addDoc = addDoc;
+  window._db       = db;
+  window._col      = col;
+  window._docRef   = (id) => doc(db, "sommerfugle", id);
+  window._addDoc   = addDoc;
   window._updateDoc = updateDoc;
   window._deleteDoc = deleteDoc;
 
@@ -462,18 +531,16 @@
   }
 
   function showStatus(msg) {
-    const bar = document.getElementById("status-bar");
     document.getElementById("status-msg").textContent = msg;
-    bar.style.display = "flex";
-    setTimeout(() => bar.style.display = "none", 2000);
+    document.getElementById("status-bar").style.display = "flex";
+    setTimeout(() => document.getElementById("status-bar").style.display = "none", 2000);
   }
 
   function previewImg(inputId, previewId) {
     const url = document.getElementById(inputId).value.trim();
     const img = document.getElementById(previewId);
     if (url) {
-      img.src = url;
-      img.style.display = "block";
+      img.src = url; img.style.display = "block";
       img.onerror = () => img.style.display = "none";
     } else {
       img.style.display = "none";
@@ -536,7 +603,7 @@
         <div class="s-cell">${row.plant || '<span style="color:#ccc">—</span>'}</div>
         <div class="s-cell"><span class="flight-badge">${row.flight || '—'}</span></div>
         <div class="row-actions">
-          <button class="btn-edit" title="Rediger" onclick="event.stopPropagation();openEdit(${JSON.stringify(row).replace(/"/g, '&quot;')})">✏️</button>
+          <button class="btn-edit" title="Rediger" onclick="event.stopPropagation();openEdit(${JSON.stringify(row).replace(/"/g,'&quot;')})">✏️</button>
           <button class="btn-del"  title="Slet"    onclick="event.stopPropagation();deleteRow('${row.id}')">✕</button>
         </div>`;
       list.appendChild(div);
@@ -571,13 +638,13 @@
   }
 
   function openEdit(row) {
-    document.getElementById("m-id").value             = row.id;
+    document.getElementById("m-id").value              = row.id;
     document.getElementById("modal-title").textContent = "Rediger: " + row.name;
-    document.getElementById("m-name").value           = row.name   || "";
-    document.getElementById("m-plant").value          = row.plant  || "";
-    document.getElementById("m-flight").value         = row.flight || "";
-    document.getElementById("m-bfImg").value          = row.bfImg  || "";
-    document.getElementById("m-plImg").value          = row.plImg  || "";
+    document.getElementById("m-name").value            = row.name   || "";
+    document.getElementById("m-plant").value           = row.plant  || "";
+    document.getElementById("m-flight").value          = row.flight || "";
+    document.getElementById("m-bfImg").value           = row.bfImg  || "";
+    document.getElementById("m-plImg").value           = row.plImg  || "";
     previewImg("m-bfImg", "m-prev-bf");
     previewImg("m-plImg", "m-prev-pl");
     updateModalLinks();
@@ -606,23 +673,44 @@
   function openPrint() {
     const rows = window._rows;
     document.getElementById("doc-subtitle").textContent =
-      `De ${rows.length} arter · sorteret efter flyvetid`;
+      `${rows.length} arter · sorteret efter flyvetid`;
     document.getElementById("doc-footer").textContent =
       `Naturguide · Gladsaxe Kommune · Opdateret ${new Date().toLocaleDateString("da-DK")}`;
-    const tbody = document.getElementById("doc-tbody");
-    tbody.innerHTML = rows.map(row => `
-      <tr>
-        <td>${row.bfImg
-          ? `<img class="doc-img" src="${row.bfImg}" alt="${row.name}">`
-          : `<div class="doc-no-img">🦋</div>`}</td>
-        <td><div class="doc-name">${row.name}</div></td>
-        <td>${row.plImg
-          ? `<img class="doc-img" src="${row.plImg}" alt="${row.plant}">`
-          : `<div class="doc-no-img">🌿</div>`}</td>
-        <td>${row.plant || ''}</td>
-        <td style="text-align:center">${row.flight || ''}</td>
-        <td><span class="doc-fund-line"></span></td>
-      </tr>`).join("");
+
+    const grid = document.getElementById("doc-grid");
+    grid.innerHTML = rows.map(row => `
+      <div class="doc-card">
+        <div class="doc-card-imgs">
+          <div class="doc-card-img-wrap">
+            ${row.bfImg
+              ? `<img src="${row.bfImg}" alt="${row.name}">`
+              : `<div class="doc-no-img">🦋</div>`}
+            <div class="doc-card-img-label">Sommerfugl</div>
+          </div>
+          <div class="doc-card-img-wrap">
+            ${row.plImg
+              ? `<img src="${row.plImg}" alt="${row.plant || ''}">`
+              : `<div class="doc-no-img">🌿</div>`}
+            <div class="doc-card-img-label">Foderplante</div>
+          </div>
+        </div>
+        <div class="doc-card-body">
+          <div class="doc-card-name">${row.name}</div>
+          <div class="doc-card-row">
+            <span class="lbl">Foderplante</span>
+            <span>${row.plant || '—'}</span>
+          </div>
+          <div class="doc-card-row">
+            <span class="lbl">Flyvetid</span>
+            <span class="doc-badge">${row.flight || '—'}</span>
+          </div>
+          <div class="doc-card-row">
+            <span class="lbl">Fund</span>
+            <span class="doc-fund-line"></span>
+          </div>
+        </div>
+      </div>`).join("");
+
     document.getElementById("print-view").style.display = "block";
   }
 
@@ -630,23 +718,16 @@
     document.getElementById("print-view").style.display = "none";
   }
 
-  window.addRow          = addRow;
-  window.deleteRow       = deleteRow;
-  window.openEdit        = openEdit;
-  window.closeModal      = closeModal;
-  window.saveEdit        = saveEdit;
-  window.openPrint       = openPrint;
-  window.closePrint      = closePrint;
-  window.updateLinks     = updateLinks;
+  window.addRow           = addRow;
+  window.deleteRow        = deleteRow;
+  window.openEdit         = openEdit;
+  window.closeModal       = closeModal;
+  window.saveEdit         = saveEdit;
+  window.openPrint        = openPrint;
+  window.closePrint       = closePrint;
+  window.updateLinks      = updateLinks;
   window.updateModalLinks = updateModalLinks;
-  window.previewImg      = previewImg;
+  window.previewImg       = previewImg;
 </script>
 </body>
 </html>
-
-							<script>
-                            	
-							</script>
-                        </body>
-                        </html>
-                    
